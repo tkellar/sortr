@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Draggable from './Draggable';
+import Draggable from '../mixins/Draggable';
 
 const FileWrapper = styled.div`
   height: 110px;

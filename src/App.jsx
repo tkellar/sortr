@@ -1,10 +1,10 @@
 import React from 'react';
-import File from './shared/components/File';
+import Board from './shared/components/Board';
 import './App.css';
 
 const App = () => (
   <div className="App">
-    <File extension="PDF" />
+    <Board />
   </div>
 );
 
