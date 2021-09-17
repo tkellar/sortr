@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import useViewportContext from '../context/useViewportRef';
 
 const DraggableContainer = styled.div`
+  position: absolute;
+
   &:hover {
     cursor: grab;
 
@@ -13,6 +16,7 @@ const DraggableContainer = styled.div`
 `;
 
 const Draggable = ({ children, initialPosition }) => {
+  const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState({
     x: initialPosition?.x ?? 0,
     y: initialPosition?.y ?? 0,
@@ -23,34 +27,50 @@ const Draggable = ({ children, initialPosition }) => {
     y: 0,
   });
 
-  const [dragging, setDragging] = useState(false);
+  const viewportRef = useViewportContext();
+  const draggableRef = useRef(null);
 
   useEffect(() => {
     const onMouseMove = (event) => {
-      event.preventDefault();
-      const { x, y } = event;
+      const { clientX, clientY } = event;
 
       if (dragging) {
-        setPosition({
-          x: Math.max(0, x) + mouseOffset.x,
-          y: Math.max(0, y) + mouseOffset.y,
+        setPosition(() => {
+          const newState = {
+            x: Math.max(0, clientX + mouseOffset.x),
+            y: Math.max(0, clientY + mouseOffset.y),
+          };
+
+          const viewportWidth = viewportRef.current.clientWidth;
+          const draggableWidth = draggableRef.current.clientWidth;
+          newState.x = Math.min(viewportWidth - draggableWidth, newState.x);
+
+          const viewportHeight = viewportRef.current.clientHeight;
+          const draggableHeight = draggableRef.current.clientHeight;
+          newState.y = Math.min(viewportHeight - draggableHeight, newState.y);
+
+          return newState;
         });
       }
     };
 
-    const onMouseUp = (event) => {
+    const onDragEnd = (event) => {
       event.preventDefault();
 
       setDragging(false);
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    const elt = viewportRef.current;
+
+    elt.addEventListener('mousemove', onMouseMove);
+    elt.addEventListener('mouseup', onDragEnd);
+    elt.addEventListener('mouseleave', onDragEnd);
     return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      elt.removeEventListener('mousemove', onMouseMove);
+      elt.removeEventListener('mouseup', onDragEnd);
+      elt.removeEventListener('mouseleave', onDragEnd);
     };
-  }, [dragging]); // FIXME: This may cause too many re-renders
+  }, [dragging, viewportRef, draggableRef]); // FIXME: This may cause too many re-renders
 
   const onMouseDown = (event) => {
     event.preventDefault();
@@ -58,15 +78,19 @@ const Draggable = ({ children, initialPosition }) => {
 
     setDragging(true);
     setMouseOffset({
-      x: position.x - event.pageX,
-      y: position.y - event.pageY,
+      x: position.x - event.nativeEvent.clientX,
+      y: position.y - event.nativeEvent.clientY,
     });
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <DraggableContainer className="Draggable" onMouseDown={onMouseDown}>
-      <div style={{ position: 'absolute', left: position.x, top: position.y }}>{children}</div>
+    <DraggableContainer
+      className="Draggable"
+      onMouseDown={onMouseDown}
+      style={{ left: position.x, top: position.y }}
+      ref={draggableRef}
+    >
+      {children}
     </DraggableContainer>
   );
 };

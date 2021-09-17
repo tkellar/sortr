@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
@@ -7,6 +7,7 @@ import EditableSpan from './EditableSpan';
 import Draggable from '../mixins/Draggable';
 import useFetch from '../hooks/useFetch';
 import File from './File';
+import { ViewportProvider } from '../context/useViewportRef';
 
 const BoardContainer = styled.div`
   position: relative;
@@ -81,6 +82,7 @@ const Board = ({ board }) => {
 
   const { data } = useFetch(`http://localhost:8000/files?boardId=${id}`);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const viewportRef = useRef(null);
 
   function updateBoardWidth(newWidth) {
     if (state.valid) {
@@ -118,10 +120,12 @@ const Board = ({ board }) => {
           </EditableSpan>
         </div>
       </BoardHeader>
-      <BoardContainer height={state.height} width={state.width}>
-        {data?.map((file) => (
-          <File key={file.id} fileConfig={file} />
-        ))}
+      <BoardContainer height={state.height} width={state.width} ref={viewportRef}>
+        <ViewportProvider value={viewportRef}>
+          {data?.map((file) => (
+            <File key={file.id} fileConfig={file} />
+          ))}
+        </ViewportProvider>
       </BoardContainer>
     </Draggable>
   );
