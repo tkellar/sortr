@@ -23,10 +23,16 @@ const Span = styled.span`
 `;
 
 const EditableSpan = (props) => {
-  const { children, onBlur, className } = props;
+  const { children, onBlur, onInput, className } = props;
 
   return (
-    <Span className={className} onBlur={onBlur} contentEditable suppressContentEditableWarning>
+    <Span
+      className={className}
+      onBlur={onBlur}
+      onInput={onInput}
+      contentEditable
+      suppressContentEditableWarning
+    >
       {children}
     </Span>
   );
@@ -35,12 +41,14 @@ const EditableSpan = (props) => {
 EditableSpan.propTypes = {
   children: PropTypes.node,
   onBlur: PropTypes.func,
+  onInput: PropTypes.func,
   className: PropTypes.string,
 };
 
 EditableSpan.defaultProps = {
   children: null,
   onBlur: null,
+  onInput: null,
   className: '',
 };
 

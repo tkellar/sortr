@@ -13,7 +13,8 @@ const FileWrapper = styled.div`
   color: ${(props) => props.color};
 `;
 
-const File = ({ extension }) => {
+const File = ({ fileConfig }) => {
+  const { extension, xPos, yPos } = fileConfig;
   const getTextColor = (ext) => {
     switch (ext) {
       default:
@@ -22,7 +23,7 @@ const File = ({ extension }) => {
   };
 
   return (
-    <Draggable className="File">
+    <Draggable className="File" initialPosition={{ x: xPos, y: yPos }}>
       <FileWrapper color={getTextColor(extension)}>
         <span className="m-0 p-2 h3">{extension}</span>
       </FileWrapper>
@@ -31,7 +32,11 @@ const File = ({ extension }) => {
 };
 
 File.propTypes = {
-  extension: PropTypes.string.isRequired,
+  fileConfig: PropTypes.shape({
+    extension: PropTypes.string,
+    xPos: PropTypes.number,
+    yPos: PropTypes.number,
+  }).isRequired,
 };
 
 export default File;

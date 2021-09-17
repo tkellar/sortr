@@ -28,11 +28,12 @@ const Draggable = ({ children, initialPosition }) => {
   useEffect(() => {
     const onMouseMove = (event) => {
       event.preventDefault();
+      const { x, y } = event;
 
       if (dragging) {
         setPosition({
-          x: event.x + mouseOffset.x,
-          y: event.y + mouseOffset.y,
+          x: Math.max(0, x) + mouseOffset.x,
+          y: Math.max(0, y) + mouseOffset.y,
         });
       }
     };
@@ -53,6 +54,7 @@ const Draggable = ({ children, initialPosition }) => {
 
   const onMouseDown = (event) => {
     event.preventDefault();
+    event.stopPropagation();
 
     setDragging(true);
     setMouseOffset({

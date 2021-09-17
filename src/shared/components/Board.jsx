@@ -1,91 +1,141 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import EditableSpan from './EditableSpan';
+import Draggable from '../mixins/Draggable';
+import useFetch from '../hooks/useFetch';
+import File from './File';
 
 const BoardContainer = styled.div`
-  --height: ${(props) => props.height}px;
-  --width: ${(props) => props.width}px;
-  position: absolute;
-  height: var(--height);
-  width: var(--width);
+  position: relative;
+  height: ${(props) => props.height}px;
+  width: ${(props) => props.width}px;
   box-shadow: 0 0 10px 5px #00000066;
-  left: calc(50% - var(--width) / 2);
-  top: calc(50% - var(--height) / 2);
+  left: ${(props) => props.x}px;
+  top: ${(props) => props.y}px;
 `;
 
 const BoardHeader = styled.div`
-  position: relative;
-  top: -2rem;
   display: flex;
   justify-content: space-between;
 `;
 
-const Board = () => {
-  const [widthState, setWidthState] = useState({ value: 800, valid: true });
-  const [heightState, setHeightState] = useState({ value: 600, valid: true });
-
-  function validateDimension(dimension) {
-    if (dimension <= 0) {
-      return false;
-    }
-
-    return true;
+function validateDimension(dimension) {
+  // FIXME: Account for board position and don't hardcode max dimension
+  if (dimension <= 0 || dimension > 4000) {
+    return false;
   }
 
-  function updateBoardWidth(width) {
-    if (validateDimension(width)) {
-      setWidthState({
-        value: width,
+  return true;
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'setWidth':
+      return {
+        ...state,
+        width: action.width,
+      };
+    case 'setHeight':
+      return {
+        ...state,
+        height: action.height,
+      };
+    case 'validate':
+      if (action.width !== undefined && !validateDimension(action.width)) {
+        return {
+          ...state,
+          valid: false,
+          message: 'Invalid Width',
+        };
+      }
+
+      if (action.height !== undefined && !validateDimension(action.height)) {
+        return {
+          ...state,
+          valid: false,
+          message: 'Invalid Height',
+        };
+      }
+
+      return {
+        ...state,
         valid: true,
-      });
-    } else {
-      setWidthState((prevState) => ({
-        ...prevState,
-        valid: false,
-      }));
+        message: null,
+      };
+    default:
+      throw new Error('Unknown action');
+  }
+}
+
+const Board = ({ board }) => {
+  const { id, name, height, width, xPos, yPos } = board;
+  const initialState = {
+    height,
+    width,
+    valid: true,
+    message: null,
+  };
+
+  const { data } = useFetch(`http://localhost:8000/files?boardId=${id}`);
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  function updateBoardWidth(newWidth) {
+    if (state.valid) {
+      dispatch({ type: 'setWidth', width: newWidth });
     }
   }
 
-  function updateBoardHeight(height) {
-    if (validateDimension(height)) {
-      setHeightState({
-        value: height,
-        valid: true,
-      });
-    } else {
-      setHeightState((prevState) => ({
-        ...prevState,
-        valid: false,
-      }));
+  function updateBoardHeight(newHeight) {
+    if (state.valid) {
+      dispatch({ type: 'setHeight', height: newHeight });
     }
   }
 
   return (
-    <BoardContainer height={heightState.value} width={widthState.value}>
-      <BoardHeader className="text-muted">
+    <Draggable initialPosition={{ x: xPos, y: yPos }}>
+      <BoardHeader className="text-muted mb-1">
         <div>
-          <EditableSpan>Board 1</EditableSpan>
+          <EditableSpan>{name}</EditableSpan>
         </div>
         <div>
           <EditableSpan
-            className={widthState.valid ? '' : 'invalid'}
+            className={state.valid ? '' : 'invalid'}
             onBlur={(event) => updateBoardWidth(event.target.innerText)}
+            onInput={(event) => dispatch({ type: 'validate', width: event.target.innerText })}
           >
-            {widthState.value}
+            {state.width}
           </EditableSpan>
           <FontAwesomeIcon className="mx-1" icon={faTimes} />
           <EditableSpan
-            className={heightState.valid ? '' : 'invalid'}
+            className={state.valid ? '' : 'invalid'}
             onBlur={(event) => updateBoardHeight(event.target.innerText)}
+            onInput={(event) => dispatch({ type: 'validate', height: event.target.innerText })}
           >
-            {heightState.value}
+            {state.height}
           </EditableSpan>
         </div>
       </BoardHeader>
-    </BoardContainer>
+      <BoardContainer height={state.height} width={state.width}>
+        {data?.map((file) => (
+          <File key={file.id} fileConfig={file} />
+        ))}
+      </BoardContainer>
+    </Draggable>
   );
+};
+
+Board.propTypes = {
+  board: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    xPos: PropTypes.number.isRequired,
+    yPos: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default Board;
