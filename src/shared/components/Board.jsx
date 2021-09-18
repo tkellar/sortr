@@ -14,8 +14,7 @@ const BoardContainer = styled.div`
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
   box-shadow: 0 0 10px 5px #00000066;
-  left: ${(props) => props.x}px;
-  top: ${(props) => props.y}px;
+  background-color: ${(props) => props.theme.colors.grey100};
 `;
 
 const BoardHeader = styled.div`
