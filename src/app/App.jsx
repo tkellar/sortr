@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import Board from './shared/components/Board';
-import { ViewportProvider } from './shared/context/useViewportRef';
-import useFetch from './shared/hooks/useFetch';
-import './App.css';
+import Board from '../shared/components/Board';
+import Header from './menu-items/Header';
+import { ViewportProvider } from '../shared/context/useViewportRef';
+import useFetch from '../shared/hooks/useFetch';
+import DrawerMenu from './menu-items/DrawerMenu';
 
 const initialTheme = {
   colors: {
@@ -23,10 +24,38 @@ const initialTheme = {
     grey800: '#343a40',
     grey900: '#212529',
   },
+  shadows: {
+    createShadow: (d, b, s) => {
+      function getDirection(dir) {
+        switch (dir) {
+          case 'up':
+            return '0 -1px';
+          case 'down':
+            return '0 1px';
+          case 'right':
+            return '1px 0';
+          case 'left':
+            return '-1px 0';
+          default:
+            return '0 0';
+        }
+      }
+      return `${getDirection(d)} ${b ?? '4px'} ${s ?? '0'} rgba(0,0,0,0.25)`;
+    },
+  },
+  zIndex: {
+    header: 100,
+    drawerMenu: 50,
+  },
+  sizing: {
+    menuHeight: 60,
+  },
 };
 
 const Viewport = styled.div`
   position: relative;
+  top: ${(props) => props.theme.sizing.menuHeight}px;
+  left: ${(props) => props.theme.sizing.menuHeight}px;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
   background-color: ${(props) => props.theme.colors.grey200};
@@ -40,6 +69,8 @@ const App = () => {
   return (
     <div className="App">
       <ThemeProvider theme={initialTheme}>
+        <Header />
+        <DrawerMenu />
         <Viewport height={4000} width={4000} ref={viewportRef}>
           <ViewportProvider value={viewportRef}>
             {data?.map((board) => (
