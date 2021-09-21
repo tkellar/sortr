@@ -8,8 +8,9 @@ import Draggable from '../mixins/Draggable';
 import useFetch from '../hooks/useFetch';
 import File from './File';
 import { ViewportProvider } from '../context/useViewportRef';
+import { IBoard, IFile, IHeightWidth } from '../models';
 
-const BoardContainer = styled.div`
+const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
@@ -70,8 +71,8 @@ function reducer(state, action) {
   }
 }
 
-const Board = ({ board }) => {
-  const { id, name, height, width, xPos, yPos } = board;
+function Board({ board }: { board: IBoard }): JSX.Element {
+  const { id, name, height, width, x, y } = board;
   const initialState = {
     height,
     width,
@@ -79,7 +80,7 @@ const Board = ({ board }) => {
     message: null,
   };
 
-  const { data } = useFetch(`http://localhost:8000/files?boardId=${id}`);
+  const { data } = useFetch<IFile[], Record<string, unknown>>(`http://localhost:8000/files?boardId=${id}`, { method: 'GET' });
   const [state, dispatch] = useReducer(reducer, initialState);
   const viewportRef = useRef(null);
 
@@ -96,7 +97,7 @@ const Board = ({ board }) => {
   }
 
   return (
-    <Draggable initialPosition={{ x: xPos, y: yPos }}>
+    <Draggable initialPosition={{ x, y }}>
       <BoardHeader className="text-muted mb-1">
         <div>
           <EditableSpan>{name}</EditableSpan>
@@ -122,13 +123,13 @@ const Board = ({ board }) => {
       <BoardContainer height={state.height} width={state.width} ref={viewportRef}>
         <ViewportProvider value={viewportRef}>
           {data?.map((file) => (
-            <File key={file.id} fileConfig={file} />
+            <File key={file.id} file={file} />
           ))}
         </ViewportProvider>
       </BoardContainer>
     </Draggable>
   );
-};
+}
 
 Board.propTypes = {
   board: PropTypes.shape({
