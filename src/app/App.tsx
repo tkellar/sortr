@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import Board from '../shared/components/Board';
+import Board from './shared/components/Board';
 import Header from './menu-items/Header';
-import { ViewportProvider } from '../shared/context/useViewportRef';
-import useFetch from '../shared/hooks/useFetch';
+import { ViewportProvider } from './shared/context/useViewportRef';
+import useFetch from './shared/hooks/useFetch';
 import DrawerMenu from './menu-items/DrawerMenu';
+import { IBoard, IHeightWidth } from './shared/models';
 
 const initialTheme = {
   colors: {
@@ -52,7 +53,7 @@ const initialTheme = {
   },
 };
 
-const Viewport = styled.div`
+const Viewport = styled.div<IHeightWidth>`
   position: relative;
   top: ${(props) => props.theme.sizing.menuHeight}px;
   left: ${(props) => props.theme.sizing.menuHeight}px;
@@ -62,9 +63,9 @@ const Viewport = styled.div`
   overflow: scroll;
 `;
 
-const App = () => {
-  const { data } = useFetch('http://localhost:8000/boards', { method: 'GET' });
-  const viewportRef = useRef(null);
+function App(): JSX.Element {
+  const { data } = useFetch<IBoard[], Record<string, unknown>>('http://localhost:8000/boards', { method: 'GET' });
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="App">
@@ -81,6 +82,6 @@ const App = () => {
       </ThemeProvider>
     </div>
   );
-};
+}
 
 export default App;

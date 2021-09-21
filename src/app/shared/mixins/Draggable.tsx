@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, PropsWithChildren } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useViewportContext from '../context/useViewportRef';
+import { ICoordinates } from '../models';
 
 const DraggableContainer = styled.div`
   position: absolute;
@@ -15,7 +16,7 @@ const DraggableContainer = styled.div`
   }
 `;
 
-const Draggable = ({ children, initialPosition }) => {
+function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosition: ICoordinates}>): JSX.Element {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState({
     x: initialPosition?.x ?? 0,
@@ -28,7 +29,7 @@ const Draggable = ({ children, initialPosition }) => {
   });
 
   const viewportRef = useViewportContext();
-  const draggableRef = useRef(null);
+  const draggableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onMouseMove = (event) => {
@@ -93,7 +94,7 @@ const Draggable = ({ children, initialPosition }) => {
       {children}
     </DraggableContainer>
   );
-};
+}
 
 Draggable.propTypes = {
   initialPosition: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),

@@ -12,7 +12,7 @@ const HeaderContainer = styled.div`
   box-shadow: ${(props) => props.theme.shadows.createShadow('down')};
 `;
 
-function Header() {
+function Header(): JSX.Element {
   return <HeaderContainer />;
 }
 

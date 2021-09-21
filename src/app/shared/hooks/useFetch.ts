@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 
-function useFetch(input, init) {
+interface UseFetchReturn<TRet, TErr> {
+  isLoading: boolean;
+  data: TRet;
+  error: TErr;
+}
+
+function useFetch<TRet, TErr>(input: RequestInfo, init: RequestInit): UseFetchReturn<TRet, TErr> {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState(null as TRet);
+  const [error, setError] = useState(null as TErr);
 
   useEffect(() => {
     fetch(input, init)

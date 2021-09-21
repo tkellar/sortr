@@ -37,7 +37,7 @@ const DrawerMenuContainer = styled.div`
   }
 `;
 
-const ButtonColumn = styled.div`
+const ButtonColumn = styled.div<{ top: number; stickyRight?: boolean }>`
   position: absolute;
   top: ${(props) => props.top}px;
   bottom: 0;
@@ -50,7 +50,7 @@ const ButtonColumn = styled.div`
   padding: 1rem 0;
 `;
 
-function DrawerMenu() {
+function DrawerMenu(): JSX.Element {
   const [expanded, setExpanded] = useState(false);
 
   function onExpandToggleClick() {
@@ -64,7 +64,7 @@ function DrawerMenu() {
           className="rotate-on-expand"
           icon={faAngleRight}
           size="2x"
-          rotation={expanded ? 180 : 0}
+          rotation={expanded ? 180 : null}
           onClick={onExpandToggleClick}
         />
       </ButtonColumn>

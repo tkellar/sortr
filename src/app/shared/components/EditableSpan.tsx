@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+interface IEditableSpanProps {
+  onBlur: React.FocusEventHandler<HTMLSpanElement>;
+  onInput: React.FocusEventHandler<HTMLSpanElement>;
+  className: string;
+}
 
 const Span = styled.span`
   padding: 0.25rem;
@@ -22,7 +28,7 @@ const Span = styled.span`
   }
 `;
 
-const EditableSpan = (props) => {
+function EditableSpan(props: PropsWithChildren<IEditableSpanProps>): JSX.Element {
   const { children, onBlur, onInput, className } = props;
 
   return (
@@ -36,7 +42,7 @@ const EditableSpan = (props) => {
       {children}
     </Span>
   );
-};
+}
 
 EditableSpan.propTypes = {
   children: PropTypes.node,
