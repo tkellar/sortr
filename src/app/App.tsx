@@ -3,9 +3,9 @@ import styled, { ThemeProvider } from 'styled-components';
 import Board from './shared/components/Board';
 import Header from './menu-items/Header';
 import { ViewportProvider } from './shared/context/useViewportRef';
-import useFetch from './shared/hooks/useFetch';
 import DrawerMenu from './menu-items/DrawerMenu';
-import { IBoard, IHeightWidth } from './shared/models';
+import { IHeightWidth } from './shared/models';
+import useBoards from './shared/hooks/useBoards';
 
 const initialTheme = {
   colors: {
@@ -64,7 +64,7 @@ const Viewport = styled.div<IHeightWidth>`
 `;
 
 function App(): JSX.Element {
-  const { data } = useFetch<IBoard[], Record<string, unknown>>('http://localhost:8000/boards', { method: 'GET' });
+  const { boards } = useBoards();
   const viewportRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -74,7 +74,7 @@ function App(): JSX.Element {
         <DrawerMenu />
         <Viewport height={4000} width={4000} ref={viewportRef}>
           <ViewportProvider value={viewportRef}>
-            {data?.map((board) => (
+            {boards?.map((board) => (
               <Board key={board.id} board={board} />
             ))}
           </ViewportProvider>

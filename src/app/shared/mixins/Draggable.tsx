@@ -18,12 +18,12 @@ const DraggableContainer = styled.div`
 
 function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosition: ICoordinates}>): JSX.Element {
   const [dragging, setDragging] = useState(false);
-  const [position, setPosition] = useState({
+  const [position, setPosition] = useState<ICoordinates>({
     x: initialPosition?.x ?? 0,
     y: initialPosition?.y ?? 0,
   });
 
-  const [mouseOffset, setMouseOffset] = useState({
+  const [mouseOffset, setMouseOffset] = useState<ICoordinates>({
     x: 0,
     y: 0,
   });

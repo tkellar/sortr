@@ -3,21 +3,29 @@
     {
       "id": 1,
       "name": "Board 1",
-      "xPos": 200,
-      "yPos": 200,
+      "x": 200,
+      "y": 200,
       "height": 600,
       "width": 800
     }
   ],
 
-  "files": [
+  "boardItems": [
     {
       "id": 1,
-      "boardId": 1,
-      "name": "test.txt",
-      "extension": "txt",
-      "xPos": 100,
-      "yPos": 100
+      "boardItemType": 1,
+      "parentBoardItemType": 0,
+      "parentId": 1,
+      "name": "test file name",
+      "extension": "TXT",
+      "x": 100,
+      "y": 100
     }
+  ],
+
+  "boardItemTypes": [
+    { "id": 0, "name": "board" },
+    { "id": 1, "name": "file" },
+    { "id": 2, "name": "folder" }
   ]
 }

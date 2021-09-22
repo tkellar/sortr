@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import EditableSpan from './EditableSpan';
 import Draggable from '../mixins/Draggable';
-import useFetch from '../hooks/useFetch';
 import File from './File';
 import { ViewportProvider } from '../context/useViewportRef';
-import { IBoard, IFile, IHeightWidth } from '../models';
+import { IBoard, IHeightWidth } from '../models';
+import useFiles from '../hooks/useFiles';
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -80,7 +80,7 @@ function Board({ board }: { board: IBoard }): JSX.Element {
     message: null,
   };
 
-  const { data } = useFetch<IFile[], Record<string, unknown>>(`http://localhost:8000/files?boardId=${id}`, { method: 'GET' });
+  const { files } = useFiles(0, id);
   const [state, dispatch] = useReducer(reducer, initialState);
   const viewportRef = useRef(null);
 
@@ -122,7 +122,7 @@ function Board({ board }: { board: IBoard }): JSX.Element {
       </BoardHeader>
       <BoardContainer height={state.height} width={state.width} ref={viewportRef}>
         <ViewportProvider value={viewportRef}>
-          {data?.map((file) => (
+          {files?.map((file) => (
             <File key={file.id} file={file} />
           ))}
         </ViewportProvider>
@@ -137,8 +137,8 @@ Board.propTypes = {
     name: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    xPos: PropTypes.number.isRequired,
-    yPos: PropTypes.number.isRequired,
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
   }).isRequired,
 };
 
