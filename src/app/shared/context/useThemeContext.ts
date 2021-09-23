@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ThemeContext } from 'styled-components';
 
-function useThemeContext() {
+function useThemeContext(): { colors: { [key: string]: string } } {
   return useContext(ThemeContext);
 }
 

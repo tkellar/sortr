@@ -11,7 +11,7 @@ const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
   height: ${(props) => props.height}px;
   width: ${(props) => props.width}px;
-  box-shadow: 0 0 10px 5px #00000066;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
   background-color: ${(props) => props.theme.colors.grey100};
 `;
 

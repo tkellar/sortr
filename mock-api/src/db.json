@@ -7,14 +7,6 @@
       "y": 200,
       "height": 600,
       "width": 800
-    },
-    {
-      "id": 2,
-      "name": "Board 2",
-      "x": 200,
-      "y": 900,
-      "height": 600,
-      "width": 800
     }
   ],
 
@@ -24,8 +16,8 @@
       "boardItemType": 1,
       "parentBoardItemType": 0,
       "parentId": 1,
-      "name": "test file name",
-      "extension": "TXT",
+      "name": "Word Document",
+      "extension": "DOC",
       "x": 100,
       "y": 100
     },
@@ -33,11 +25,41 @@
       "id": 2,
       "boardItemType": 1,
       "parentBoardItemType": 0,
-      "parentId": 2,
-      "name": "another file",
+      "parentId": 1,
+      "name": "Instructions",
       "extension": "PDF",
-      "x": 100,
+      "x": 250,
       "y": 100
+    },
+    {
+      "id": 3,
+      "boardItemType": 1,
+      "parentBoardItemType": 0,
+      "parentId": 1,
+      "name": "Excel Sheet",
+      "extension": "XLS",
+      "x": 400,
+      "y": 100
+    },
+    {
+      "id": 4,
+      "boardItemType": 1,
+      "parentBoardItemType": 0,
+      "parentId": 1,
+      "name": "Powerpoint",
+      "extension": "PPT",
+      "x": 550,
+      "y": 100
+    },
+    {
+      "id": 5,
+      "boardItemType": 1,
+      "parentBoardItemType": 0,
+      "parentId": 1,
+      "name": "Text File",
+      "extension": "TXT",
+      "x": 100,
+      "y": 300
     }
   ],
 
