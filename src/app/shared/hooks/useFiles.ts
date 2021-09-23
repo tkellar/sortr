@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { BoardItemType, IFile } from '../models';
+import { BoardItemType, FileViewModel } from '../models';
 import useFetch from './useFetch';
 
 interface IUseFilesReturn {
-  files: IFile[];
+  files: FileViewModel[];
   isLoading: boolean;
-  error: Record<string, unknown>;
-  addFile: (f: IFile) => void;
+  error: Error;
+  addFile: (f: FileViewModel) => void;
   removeFile: (id: number) => void;
 }
 
@@ -14,13 +14,13 @@ function useFiles(parentBoardItemType: BoardItemType, parentId: number): IUseFil
   let apiPath = 'http://localhost:8000/boardItems';
   apiPath += `?parentBoardItemType=${parentBoardItemType}`;
   apiPath += `&parentId=${parentId}`;
-  const { isLoading, data, error } = useFetch<IFile[], Record<string, unknown>>(apiPath, {
+  const { isLoading, data, error } = useFetch<FileViewModel[], Error>(apiPath, {
     method: 'GET',
   });
 
-  const [files, setFiles] = useState<IFile[]>(null);
+  const [files, setFiles] = useState<FileViewModel[]>(null);
 
-  function addFile(newFile: IFile): void {
+  function addFile(newFile: FileViewModel): void {
     setFiles((prevState) => prevState.concat(newFile));
   }
 

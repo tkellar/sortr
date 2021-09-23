@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../mixins/Draggable';
-import { IFile } from '../models';
+import { FileViewModel } from '../models';
 
 const FileWrapper = styled.div`
   height: 110px;
@@ -14,7 +14,7 @@ const FileWrapper = styled.div`
   color: ${(props) => props.color};
 `;
 
-function File({ file }: { file: IFile }): JSX.Element {
+function File({ file }: { file: FileViewModel }): JSX.Element {
   const { extension, x, y } = file;
   const getTextColor = (ext) => {
     switch (ext) {
