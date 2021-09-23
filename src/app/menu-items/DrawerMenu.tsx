@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faAngleRight,
-  faUserCog,
-  faFileMedical,
-  faSitemap,
-  faFolderPlus,
-  faToolbox,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 const DrawerMenuContainer = styled.div`
   position: fixed;
@@ -67,15 +60,6 @@ function DrawerMenu(): JSX.Element {
           rotation={expanded ? 180 : null}
           onClick={onExpandToggleClick}
         />
-      </ButtonColumn>
-      <ButtonColumn top={100}>
-        <div className="d-flex flex-column align-items-center justify-content-between">
-          <FontAwesomeIcon icon={faSitemap} fixedWidth size="2x" />
-          <FontAwesomeIcon icon={faFileMedical} size="2x" fixedWidth className="my-4" />
-          <FontAwesomeIcon icon={faFolderPlus} size="2x" fixedWidth className="mb-4" />
-          <FontAwesomeIcon icon={faToolbox} size="2x" fixedWidth />
-        </div>
-        <FontAwesomeIcon icon={faUserCog} size="2x" fixedWidth />
       </ButtonColumn>
     </DrawerMenuContainer>
   );
