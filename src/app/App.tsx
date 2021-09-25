@@ -1,13 +1,14 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Header from './components/Header';
 import { ViewportProvider } from './context/useViewportRef';
 import DrawerMenu from './components/DrawerMenu';
-import { ContextMenuItem, ContextMenuViewModel, IHeightWidth } from './models';
+import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth, UserItemType } from './models';
 import ContextMenu from './components/ContextMenu';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import usePage from './hooks/usePage';
 import UserItemFactory from './components/UserItemFactory';
+import BoardForm from './components/forms/BoardForm';
 
 const initialTheme = {
   colors: {
@@ -66,13 +67,49 @@ const Viewport = styled.div<IHeightWidth>`
 `;
 
 function App(): JSX.Element {
-  const { page } = usePage(1);
+  const { page, addChild } = usePage(1);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const [newBoardPosition, setNewBoardPosition] = useState<ICoordinates>(null);
 
   const menuItems: ContextMenuItem[] = [
-    { displayText: 'New Board', iconLeft: faPlusCircle },
+    { displayText: 'New Board', iconLeft: faPlusCircle, onClickAction: onNewBoardClick },
     { displayText: 'Customize...' }
   ];
+
+  function onNewBoardClick(coords: ICoordinates) {
+    console.log(coords);
+    setNewBoardPosition(coords);
+  }
+
+  function onNewBoardSubmit(formValue: { name: string; width: number; height: number }): void {
+    const { x, y } = newBoardPosition;
+    const newBoard: BoardViewModel = {
+      name: formValue.name,
+      height: formValue.height,
+      width: formValue.width,
+      userItemType: UserItemType.Board,
+      childUserItemIds: [],
+      x,
+      y,
+    };
+
+    fetch(`http://localhost:8000/userItems`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newBoard),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+
+      throw new Error();
+    }).then((created: BoardViewModel) => {
+      addChild(created.id);
+      setNewBoardPosition(null);
+    })
+  }
 
   return (
     <div className="App">
@@ -81,6 +118,7 @@ function App(): JSX.Element {
         <DrawerMenu />
           <Viewport height={4000} width={4000} ref={viewportRef}>
             <ViewportProvider value={viewportRef}>
+              <BoardForm onSubmitCallback={onNewBoardSubmit} showAt={newBoardPosition} />
               <ContextMenu menu={new ContextMenuViewModel(menuItems)} />
               {page?.childUserItemIds?.map((childId) => (
                 <UserItemFactory key={childId} userItemId={childId} />

@@ -3,7 +3,7 @@ import { IUserItem } from './IUserItem';
 import { ICoordinates } from './ICoordinates';
 
 export class FileViewModel implements IUserItem, ICoordinates {
-  id: number;
+  id?: number;
   userItemType: UserItemType;
   name: string;
   extension: string;

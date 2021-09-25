@@ -3,7 +3,7 @@ import { IUserItemParent } from './IUserItemParent';
 import { UserItemType } from './UserItemType';
 
 export class BoardViewModel implements IUserItem, IUserItemParent, IHeightWidth, ICoordinates {
-  id: number;
+  id?: number;
   name: string;
   userItemType: UserItemType;
   childUserItemIds: number[];
