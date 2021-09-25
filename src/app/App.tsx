@@ -1,13 +1,13 @@
 import { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import Header from './menu-items/Header';
-import { ViewportProvider } from './shared/context/useViewportRef';
-import DrawerMenu from './menu-items/DrawerMenu';
-import { ContextMenuItem, ContextMenuViewModel, IHeightWidth } from './shared/models';
-import ContextMenu from './shared/mixins/ContextMenu';
+import Header from './components/Header';
+import { ViewportProvider } from './context/useViewportRef';
+import DrawerMenu from './components/DrawerMenu';
+import { ContextMenuItem, ContextMenuViewModel, IHeightWidth } from './models';
+import ContextMenu from './mixins/ContextMenu';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import usePage from './shared/hooks/usePage';
-import UserItemFactory from './shared/components/UserItemFactory';
+import usePage from './hooks/usePage';
+import UserItemFactory from './components/UserItemFactory';
 
 const initialTheme = {
   colors: {
