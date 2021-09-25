@@ -42,12 +42,12 @@ function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosi
     }
 
     function onMouseMove(event: MouseEvent) {
-      const { clientX, clientY } = event;
+      const { pageX, pageY } = event;
 
       setPosition(() => {
         const newState = {
-          x: Math.max(0, clientX + mouseOffset.x),
-          y: Math.max(0, clientY + mouseOffset.y),
+          x: Math.max(0, pageX + mouseOffset.x),
+          y: Math.max(0, pageY + mouseOffset.y),
         };
 
         const viewportWidth = viewportRef.current.clientWidth;
@@ -69,8 +69,8 @@ function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosi
 
     setDragging(true);
     setMouseOffset({
-      x: position.x - event.nativeEvent.clientX,
-      y: position.y - event.nativeEvent.clientY,
+      x: position.x - event.nativeEvent.pageX,
+      y: position.y - event.nativeEvent.pageY,
     });
   }
 
@@ -79,7 +79,6 @@ function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosi
       className="Draggable"
       onMouseDown={onMouseDown}
       onMouseUp={() => setDragging(false)}
-      // onMouseLeave={() => setDragging(false)}
       style={{ left: position.x, top: position.y }}
       ref={draggableRef}
     >

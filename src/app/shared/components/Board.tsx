@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import Draggable from '../mixins/Draggable';
 import File from './File';
 import { ViewportProvider } from '../context/useViewportRef';
-import { BoardViewModel, IHeightWidth } from '../models';
+import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
 import useFiles from '../hooks/useFiles';
+import ContextMenu from '../mixins/ContextMenu';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -26,6 +28,13 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
   const { files } = useFiles(0, id);
   const viewportRef = useRef(null);
 
+  const menuItems: ContextMenuItem[] = [
+    { displayText: 'File', iconRight: faAngleRight },
+    { displayText: 'Folder', iconRight: faAngleRight },
+    { displayText: 'Customize...' }
+  ];
+  const menu = new ContextMenuViewModel(menuItems);
+
   return (
     <Draggable initialPosition={{ x, y }}>
       <BoardHeader className="text-muted mb-1">
@@ -33,6 +42,7 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
       </BoardHeader>
       <BoardContainer height={height} width={width} ref={viewportRef}>
         <ViewportProvider value={viewportRef}>
+          <ContextMenu menu={menu} />
           {files?.map((file) => (
             <File key={file.id} file={file} />
           ))}
