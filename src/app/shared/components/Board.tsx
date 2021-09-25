@@ -2,12 +2,11 @@ import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../mixins/Draggable';
-import File from './File';
 import { ViewportProvider } from '../context/useViewportRef';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
-import useFiles from '../hooks/useFiles';
 import ContextMenu from '../mixins/ContextMenu';
 import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
+import UserItemFactory from './UserItemFactory';
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -23,9 +22,8 @@ const BoardHeader = styled.div`
 `;
 
 function Board({ board }: { board: BoardViewModel }): JSX.Element {
-  const { id, name, height, width, x, y } = board;
+  const { name, height, width, x, y, childUserItemIds } = board;
 
-  const { files } = useFiles(0, id);
   const viewportRef = useRef(null);
 
   const menuItems: ContextMenuItem[] = [
@@ -57,8 +55,8 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
       <BoardContainer height={height} width={width} ref={viewportRef}>
         <ViewportProvider value={viewportRef}>
           <ContextMenu menu={menu} />
-          {files?.map((file) => (
-            <File key={file.id} file={file} />
+          {childUserItemIds?.map((childId) => (
+            <UserItemFactory key={childId} userItemId={childId} />
           ))}
         </ViewportProvider>
       </BoardContainer>

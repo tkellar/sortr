@@ -1,12 +1,10 @@
-import { BoardItemType } from './BoardItemType';
-import { IBoardItem } from './IBoardItem';
+import { UserItemType } from './UserItemType';
+import { IUserItem } from './IUserItem';
 import { ICoordinates } from './ICoordinates';
 
-export class FileViewModel implements IBoardItem, ICoordinates {
+export class FileViewModel implements IUserItem, ICoordinates {
   id: number;
-  boardItemType: BoardItemType;
-  parentBoardItemType: BoardItemType;
-  parentId: number;
+  userItemType: UserItemType;
   name: string;
   extension: string;
   x: number;
