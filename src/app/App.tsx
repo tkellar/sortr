@@ -77,7 +77,6 @@ function App(): JSX.Element {
   ];
 
   function onNewBoardClick(coords: ICoordinates) {
-    console.log(coords);
     setNewBoardPosition(coords);
   }
 
