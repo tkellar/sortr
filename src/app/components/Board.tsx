@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Draggable from '../mixins/Draggable';
+import Draggable from '../wrappers/Draggable';
 import { ViewportProvider } from '../context/useViewportRef';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
-import ContextMenu from '../mixins/ContextMenu';
+import ContextMenu from './ContextMenu';
 import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './UserItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
