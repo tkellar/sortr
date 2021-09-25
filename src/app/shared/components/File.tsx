@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../mixins/Draggable';
 import { FileViewModel } from '../models';
 import useThemeContext from '../context/useThemeContext';
+import useClickOutside from '../hooks/useClickOutside';
 
 const FileWrapper = styled.div`
   height: 110px;
@@ -15,12 +16,20 @@ const FileWrapper = styled.div`
   border: solid ${props => props.color} 1px;
   border-radius: 0.25em;
   color: ${(props) => props.color};
-  background: linear-gradient(180deg, ${(props) => props.color} 0%, rgba(237, 49, 93, 0.1) 75%);
+  background: linear-gradient(180deg, ${(props) => props.color} 0%, ${props => props.theme.colors.grey200} 60%);
+  transition: box-shadow 0.2s ease-out;
+
+  &.selected {
+    box-shadow: 0 0 8px 4px ${props => props.theme.colors.blue};
+  }
 `;
 
 function File({ file }: { file: FileViewModel }): JSX.Element {
   const { extension, x, y, name } = file;
   const theme = useThemeContext();
+  const [selected, setSelected] = useState(false);
+  const fileRef = useClickOutside<HTMLDivElement>(() => setSelected(false));
+
   const getTextColor = (ext: string) => {
     switch (ext?.toLowerCase()) {
       case 'doc':
@@ -40,10 +49,22 @@ function File({ file }: { file: FileViewModel }): JSX.Element {
     }
   };
 
+  function onFileClick(event: React.MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setSelected(true);
+  }
+
   return (
-    <Draggable initialPosition={{ x, y }}>
+    <Draggable allowDrag={selected} initialPosition={{ x, y }}>
       <div className="d-flex flex-column align-items-center">
-        <FileWrapper color={getTextColor(extension)}>
+        <FileWrapper
+          className={selected ? 'selected' : ''}
+          color={getTextColor(extension)}
+          onClick={onFileClick}
+          ref={fileRef}
+        >
           <span className="m-0 p-2 h3">{extension}</span>
         </FileWrapper>
         <div className="text-center">

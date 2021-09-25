@@ -3,80 +3,94 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useViewportContext from '../context/useViewportRef';
 import { ICoordinates } from '../models';
+import { getMouseOffset } from '../helpers/getMouseOffset';
 
 const DraggableContainer = styled.div`
   position: absolute;
 
   &:hover {
-    cursor: grab;
+    cursor: pointer;
+  }
 
-    &:active {
-      cursor: grabbing;
+  &.dragging {
+    &:hover {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
     }
   }
 `;
 
-function Draggable({ children, initialPosition }: PropsWithChildren<{initialPosition: ICoordinates}>): JSX.Element {
+function Draggable({ children, allowDrag, initialPosition }: PropsWithChildren<{initialPosition: ICoordinates, allowDrag: boolean}>): JSX.Element {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState<ICoordinates>({
     x: initialPosition?.x ?? 0,
     y: initialPosition?.y ?? 0,
   });
 
-  const [mouseOffset, setMouseOffset] = useState<ICoordinates>({
+  const [mouseGrabPos, setMouseGrabPos] = useState<ICoordinates>({
     x: 0,
     y: 0,
   });
 
   const viewportRef = useViewportContext();
   const draggableRef = useRef<HTMLDivElement>(null);
+  const allowDragRef = useRef(allowDrag && dragging);
+  const mouseGrabPosRef = useRef(mouseGrabPos);
 
   useEffect(() => {
-    if (dragging) {
-      const elt = viewportRef.current;
+    allowDragRef.current = allowDrag && dragging;
+  }, [allowDrag, dragging]);
 
-      elt.addEventListener('mousemove', onMouseMove);
-      return () => {
-        elt.removeEventListener('mousemove', onMouseMove);
-      };
-    }
+  useEffect(() => {
+    mouseGrabPosRef.current = mouseGrabPos;
+  }, [mouseGrabPos]);
+
+  useEffect(() => {
+    const elt = viewportRef.current;
+
+    elt.addEventListener('mousemove', onMouseMove);
+    return () => {
+      elt.removeEventListener('mousemove', onMouseMove);
+    };
 
     function onMouseMove(event: MouseEvent) {
-      const { pageX, pageY } = event;
+      if (allowDragRef.current) {
+        const { x, y } = getMouseOffset(event, elt);
 
-      setPosition(() => {
-        const newState = {
-          x: Math.max(0, pageX + mouseOffset.x),
-          y: Math.max(0, pageY + mouseOffset.y),
-        };
+        setPosition(() => {
+          const newState = {
+            x: Math.max(0, x - mouseGrabPosRef.current.x),
+            y: Math.max(0, y - mouseGrabPosRef.current.y),
+          };
 
-        const viewportWidth = viewportRef.current.clientWidth;
-        const draggableWidth = draggableRef.current.clientWidth;
-        newState.x = Math.min(viewportWidth - draggableWidth, newState.x);
+          const viewportWidth = viewportRef.current.clientWidth;
+          const draggableWidth = draggableRef.current.clientWidth;
+          newState.x = Math.min(viewportWidth - draggableWidth, newState.x);
 
-        const viewportHeight = viewportRef.current.clientHeight;
-        const draggableHeight = draggableRef.current.clientHeight;
-        newState.y = Math.min(viewportHeight - draggableHeight, newState.y);
+          const viewportHeight = viewportRef.current.clientHeight;
+          const draggableHeight = draggableRef.current.clientHeight;
+          newState.y = Math.min(viewportHeight - draggableHeight, newState.y);
 
-        return newState;
-      });
+          return newState;
+        });
+      }
     }
-  }, [dragging, viewportRef, draggableRef]);
+  }, []);
 
   function onMouseDown(event: SyntheticEvent<HTMLElement, MouseEvent>): void {
     event.preventDefault();
     event.stopPropagation();
 
     setDragging(true);
-    setMouseOffset({
-      x: position.x - event.nativeEvent.pageX,
-      y: position.y - event.nativeEvent.pageY,
-    });
+    setMouseGrabPos(getMouseOffset(event.nativeEvent, event.target as HTMLElement));
   }
 
   return (
     <DraggableContainer
-      className="Draggable"
+      className={allowDrag ? 'dragging' : ''}
       onMouseDown={onMouseDown}
       onMouseUp={() => setDragging(false)}
       style={{ left: position.x, top: position.y }}
