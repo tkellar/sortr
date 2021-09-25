@@ -1,13 +1,13 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import Board from './shared/components/Board';
 import Header from './menu-items/Header';
 import { ViewportProvider } from './shared/context/useViewportRef';
 import DrawerMenu from './menu-items/DrawerMenu';
-import { ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth } from './shared/models';
-import useBoards from './shared/hooks/useBoards';
+import { ContextMenuItem, ContextMenuViewModel, IHeightWidth } from './shared/models';
 import ContextMenu from './shared/mixins/ContextMenu';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import usePage from './shared/hooks/usePage';
+import UserItemFactory from './shared/components/UserItemFactory';
 
 const initialTheme = {
   colors: {
@@ -66,26 +66,13 @@ const Viewport = styled.div<IHeightWidth>`
 `;
 
 function App(): JSX.Element {
-  const { boards, addBoard } = useBoards();
+  const { page } = usePage(1);
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  function onNewBoardClick(coords: ICoordinates) {
-    const { x, y } = coords;
-    addBoard({
-      id: 2,
-      name: 'Board 2',
-      x,
-      y,
-      height: 600,
-      width: 800,
-    });
-  }
-
   const menuItems: ContextMenuItem[] = [
-    { displayText: 'New Board', iconLeft: faPlusCircle, onClickAction: onNewBoardClick },
+    { displayText: 'New Board', iconLeft: faPlusCircle },
     { displayText: 'Customize...' }
   ];
-  const contextMenuViewModel = new ContextMenuViewModel(menuItems);
 
   return (
     <div className="App">
@@ -94,9 +81,9 @@ function App(): JSX.Element {
         <DrawerMenu />
           <Viewport height={4000} width={4000} ref={viewportRef}>
             <ViewportProvider value={viewportRef}>
-              <ContextMenu menu={contextMenuViewModel} />
-              {boards?.map((board) => (
-                <Board key={board.id} board={board} />
+              <ContextMenu menu={new ContextMenuViewModel(menuItems)} />
+              {page?.childUserItemIds?.map((childId) => (
+                <UserItemFactory key={childId} userItemId={childId} />
               ))}
             </ViewportProvider>
           </Viewport>

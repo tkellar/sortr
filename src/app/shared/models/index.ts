@@ -1,8 +1,11 @@
 export type { IHeightWidth } from './IHeightWidth';
 export type { ICoordinates } from './ICoordinates';
+export type { IUserItem } from './IUserItem';
+export type { IUserItemParent } from './IUserItemParent';
+export { isUserItemParent } from './IUserItemParent';
 export { BoardViewModel } from './BoardViewModel';
 export { FileViewModel } from './FileViewModel';
-export type { BoardItemType } from './BoardItemType';
-export type { IBoardItem } from './IBoardItem';
+export { UserItemType } from './UserItemType';
 export { ContextMenuViewModel } from './ContextMenuViewModel';
 export { ContextMenuItem } from './ContextMenuItem';
+export { PageViewModel } from './PageViewModel';
