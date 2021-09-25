@@ -7,7 +7,7 @@ import { ViewportProvider } from '../context/useViewportRef';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
 import useFiles from '../hooks/useFiles';
 import ContextMenu from '../mixins/ContextMenu';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -29,8 +29,22 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
   const viewportRef = useRef(null);
 
   const menuItems: ContextMenuItem[] = [
-    { displayText: 'File', iconRight: faAngleRight },
-    { displayText: 'Folder', iconRight: faAngleRight },
+    {
+      displayText: 'File',
+      iconRight: faAngleRight,
+      children: [
+        { displayText: 'New File', iconLeft: faPlusCircle },
+        { displayText: 'Upload File', iconLeft: faUpload }
+      ]
+    },
+    {
+      displayText: 'Folder',
+      iconRight: faAngleRight,
+      children: [
+        { displayText: 'New Folder', iconLeft: faPlusCircle },
+        { displayText: 'Upload Folder', iconLeft: faUpload }
+      ]
+    },
     { displayText: 'Customize...' }
   ];
   const menu = new ContextMenuViewModel(menuItems);
