@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { useRef } from 'react';
 import styled from 'styled-components';
 import useViewportContext from '../context/useViewportRef';
 import useClickOutside from '../hooks/useClickOutside';
@@ -45,11 +44,9 @@ function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
   const [menuPos, setMenuPos] = useState<ICoordinates>({ x: 0, y: 0 });
   const { allowContextMenu, menuItems } = menu;
   const viewportRef = useViewportContext();
-  const contextMenuRef = useRef<HTMLDivElement>(null);
-
-  useClickOutside(() => {
+  const contextMenuRef = useClickOutside<HTMLDivElement>(() => {
     setShowing(false);
-  }, show ? contextMenuRef: null);
+  });
 
   useEffect(() => {
     function showContextMenu(event: MouseEvent) {
