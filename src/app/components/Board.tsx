@@ -3,11 +3,16 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../wrappers/Draggable';
 import { ViewportProvider } from '../context/useViewportRef';
-import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
+import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth, IUserItem } from '../models';
 import ContextMenu from './ContextMenu';
-import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './UserItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
+
+interface IBoardProps {
+  board: BoardViewModel,
+  createChild: <TChild extends IUserItem>(childItem: TChild) => Promise<TChild>,
+}
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -27,7 +32,7 @@ const BoardHeader = styled.div`
   justify-content: space-between;
 `;
 
-function Board({ board }: { board: BoardViewModel }): JSX.Element {
+function Board({ board }: IBoardProps): JSX.Element {
   const { name, height, width, x, y, childUserItemIds } = board;
   const [selected, setSelected] = useState(false);
 
@@ -36,14 +41,8 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
   });
 
   const menuItems: ContextMenuItem[] = [
-    {
-      displayText: 'File',
-      iconRight: faAngleRight,
-      children: [
-        { displayText: 'New File', iconLeft: faPlusCircle },
-        { displayText: 'Upload File', iconLeft: faUpload }
-      ]
-    },
+    { displayText: 'New Board', iconLeft: faPlusCircle },
+    { displayText: 'Upload File', iconLeft: faUpload },
     {
       displayText: 'Folder',
       iconRight: faAngleRight,
@@ -52,7 +51,8 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
         { displayText: 'Upload Folder', iconLeft: faUpload }
       ]
     },
-    { displayText: 'Customize...' }
+    { displayText: 'Customize...' },
+    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger' }
   ];
   const menu = new ContextMenuViewModel(menuItems);
 

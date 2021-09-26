@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { UserItemsApiClient } from '../api/UserItemsApiClient';
 import { IUserItem, isUserItemParent } from '../models';
 import useFetch from './useFetch';
 
@@ -6,7 +7,7 @@ interface IUseUserItemReturn {
   userItem: IUserItem;
   isLoading: boolean;
   error: Error;
-  addChild: (id: number) => void;
+  createChild: <TChild extends IUserItem>(childItem: TChild) => Promise<TChild>;
   removeChild: (id: number) => void;
 }
 
@@ -19,18 +20,19 @@ function useUserItem(userItemId: number): IUseUserItemReturn {
   );
   const [userItem, setUserItem] = useState<IUserItem>(null);
 
-  function addChild(childId: number): void {
-    setUserItem((prevState) => {
-      if (isUserItemParent(prevState)) {
-        const childrenIds = prevState.childUserItemIds;
-        return {
-          ...prevState,
-          childUserItemIds: childrenIds.concat(childId),
-        };
-      }
+  async function createChild<TChild extends IUserItem>(childItem: TChild): Promise<TChild> {
+    if (isUserItemParent(userItem)) {
+      const createdChildItem = await UserItemsApiClient.createUserItem(childItem);
+      const updatedUserItem = await UserItemsApiClient.updateUserItem<typeof userItem>(userItemId, {
+        childUserItemIds: userItem.childUserItemIds.concat(createdChildItem.id),
+      });
 
-      return prevState;
-    });
+      setUserItem(updatedUserItem);
+
+      return createdChildItem;
+    }
+
+    return null;
   }
 
   function removeChild(childId: number): void {
@@ -55,7 +57,7 @@ function useUserItem(userItemId: number): IUseUserItemReturn {
     userItem,
     isLoading,
     error,
-    addChild,
+    createChild,
     removeChild,
   };
 }

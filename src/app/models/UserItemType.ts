@@ -1,5 +1,6 @@
 export enum UserItemType {
-  Board = 0,
-  File = 1,
-  Folder = 2,
+  Page = 0,
+  Board = 1,
+  File = 2,
+  Folder = 3,
 }

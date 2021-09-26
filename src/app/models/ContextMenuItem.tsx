@@ -7,4 +7,5 @@ export class ContextMenuItem {
   iconLeft?: IconDefinition;
   iconRight?: IconDefinition;
   children?: ContextMenuItem[];
+  additionalClasses?: string;
 }

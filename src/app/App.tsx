@@ -3,12 +3,12 @@ import styled, { ThemeProvider } from 'styled-components';
 import Header from './components/Header';
 import { ViewportProvider } from './context/useViewportRef';
 import DrawerMenu from './components/DrawerMenu';
-import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth, UserItemType } from './models';
+import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth, PageViewModel, UserItemType } from './models';
 import ContextMenu from './components/ContextMenu';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import usePage from './hooks/usePage';
+import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './components/UserItemFactory';
 import BoardForm from './components/forms/BoardForm';
+import useUserItem from './hooks/useUserItem';
 
 const initialTheme = {
   colors: {
@@ -56,23 +56,39 @@ const initialTheme = {
   },
 };
 
-const Viewport = styled.div<IHeightWidth>`
-  position: relative;
+const Viewport = styled.div`
+  position: fixed;
   top: ${(props) => props.theme.sizing.menuHeight}px;
   left: ${(props) => props.theme.sizing.menuHeight}px;
-  height: ${(props) => props.height}px;
-  width: ${(props) => props.width}px;
-  background-color: ${(props) => props.theme.colors.grey200};
+  height: calc(100vh - ${(props) => props.theme.sizing.menuHeight}px);
+  width: calc(100vw - ${(props) => props.theme.sizing.menuHeight}px);
+
   overflow: scroll;
 `;
 
+const ViewportContentWrapper = styled.div<IHeightWidth>`
+  position: relative;
+  height: ${(props) => props.height}px;
+  width: ${(props) => props.width}px;
+  background-color: ${props => props.theme.colors.grey200};
+`;
+
 function App(): JSX.Element {
-  const { page, addChild } = usePage(1);
+  const { userItem, createChild } = useUserItem(0);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [newBoardPosition, setNewBoardPosition] = useState<ICoordinates>(null);
 
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle, onClickAction: onNewBoardClick },
+    { displayText: 'Upload File', iconLeft: faUpload },
+    {
+      displayText: 'Folder',
+      iconRight: faAngleRight,
+      children: [
+        { displayText: 'New Folder', iconLeft: faPlusCircle },
+        { displayText: 'Upload Folder', iconLeft: faUpload }
+      ]
+    },
     { displayText: 'Customize...' }
   ];
 
@@ -80,7 +96,7 @@ function App(): JSX.Element {
     setNewBoardPosition(coords);
   }
 
-  function onNewBoardSubmit(formValue: { name: string; width: number; height: number }): void {
+  async function onNewBoardSubmit(formValue: { name: string; width: number; height: number }): Promise<void> {
     const { x, y } = newBoardPosition;
     const newBoard: BoardViewModel = {
       name: formValue.name,
@@ -92,37 +108,27 @@ function App(): JSX.Element {
       y,
     };
 
-    fetch(`http://localhost:8000/userItems`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newBoard),
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      throw new Error();
-    }).then((created: BoardViewModel) => {
-      addChild(created.id);
-      setNewBoardPosition(null);
-    })
+    await createChild(newBoard);
+    setNewBoardPosition(null);
   }
+
+  const childrenUserItems = (userItem as PageViewModel)?.childUserItemIds?.map((childId) => (
+    <UserItemFactory key={childId} userItemId={childId} />
+  ));
 
   return (
     <div className="App">
       <ThemeProvider theme={initialTheme}>
         <Header />
         <DrawerMenu />
-          <Viewport height={4000} width={4000} ref={viewportRef}>
-            <ViewportProvider value={viewportRef}>
-              <BoardForm onSubmitCallback={onNewBoardSubmit} showAt={newBoardPosition} />
-              <ContextMenu menu={new ContextMenuViewModel(menuItems)} />
-              {page?.childUserItemIds?.map((childId) => (
-                <UserItemFactory key={childId} userItemId={childId} />
-              ))}
-            </ViewportProvider>
+          <Viewport>
+            <ViewportContentWrapper height={4000} width={4000} ref={viewportRef}>
+              <ViewportProvider value={viewportRef}>
+                <BoardForm onSubmitCallback={onNewBoardSubmit} showAt={newBoardPosition} />
+                <ContextMenu menu={new ContextMenuViewModel(menuItems)} />
+                {childrenUserItems}
+              </ViewportProvider>
+            </ViewportContentWrapper>
           </Viewport>
       </ThemeProvider>
     </div>

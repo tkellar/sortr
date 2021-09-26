@@ -94,6 +94,7 @@ function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
       {/* Context Menu Items */}
       {menuItems.map((item, i) => (
         <ContextMenuItemWrapper
+          className={item.additionalClasses}
           key={item.displayText}
           onClick={(event) => onClickWrapper(event, item.onClickAction)}
           onMouseEnter={() => setShownChildMenu(i)}
@@ -109,7 +110,7 @@ function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
               style={{ left: '100%', top: '0' }}
             >
               {item.children?.map((childItem) => (
-                <ContextMenuItemWrapper key={childItem.displayText} onClick={(event) => onClickWrapper(event, childItem.onClickAction)}>
+                <ContextMenuItemWrapper className={childItem.additionalClasses} key={childItem.displayText} onClick={(event) => onClickWrapper(event, childItem.onClickAction)}>
                   {childItem.iconLeft && <FontAwesomeIcon className="me-1" icon={childItem.iconLeft} />}
                   <span className="me-auto">{childItem.displayText}</span>
                   {childItem.iconRight && <FontAwesomeIcon className="ms-1" icon={childItem.iconRight} />}
