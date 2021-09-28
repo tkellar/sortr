@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import useViewportContext from '../context/ViewportContext';
+import useContextMenuContext from '../context/ContextMenuContext';
 import useClickOutside from '../hooks/useClickOutside';
 import { ContextMenuViewModel, ICoordinates } from '../models';
 
@@ -41,62 +41,30 @@ const ContextMenuItemWrapper = styled.div`
 `;
 
 function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
-  const { allowContextMenu, menuItems } = menu;
+  if (!menu) {
+    return null;
+  }
 
-  const [show, setShowing] = useState(false);
+  const { menuItems, position } = menu;
   const [shownChildMenu, setShownChildMenu] = useState<number>(null);
-  const [menuPos, setMenuPos] = useState<ICoordinates>({ x: 0, y: 0 });
-
-  const viewportRef = useViewportContext();
-  const hideMenuTimeout = useRef<NodeJS.Timeout>(null);
-  const allowContextMenuRef = useRef(false);
+  const context = useContextMenuContext();
   const contextMenuRef = useClickOutside<HTMLDivElement>(() => {
-    setShowing(false);
+    context.setMenuConfig(null);
   });
-
-  useEffect(() => {
-    allowContextMenuRef.current = allowContextMenu;
-  }, [allowContextMenu]);
-
-  useEffect(() => {
-    function showContextMenu(event: MouseEvent) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (allowContextMenuRef.current) {
-        setShowing(true);
-        setMenuPos({ x: event.offsetX, y: event.offsetY });
-      }
-    }
-
-    const viewportElement = viewportRef.current;
-    viewportElement.addEventListener('contextmenu', showContextMenu);
-
-    return () => {
-      viewportElement.removeEventListener('contextmenu', showContextMenu);
-      if (hideMenuTimeout.current) {
-        clearTimeout(hideMenuTimeout.current);
-      }
-    }
-  }, []);
 
   function onClickWrapper(event: React.MouseEvent<HTMLDivElement, MouseEvent>, onClickAction: (coords: ICoordinates) => void) {
     event.preventDefault();
     event.stopPropagation();
-    setShowing(false);
 
     if (onClickAction) {
-      onClickAction({ x: menuPos.x, y: menuPos.y });
+      onClickAction({ x: position.x, y: position.y });
     }
   }
 
-  const { x, y } = menuPos;
   return (
     <ContextMenuWrapper
-      className={show ? 'show' : ''}
-      style={{ left: x, top: y }}
-      onMouseLeave={() => { hideMenuTimeout.current = setTimeout(() => setShowing(false), 500); }}
-      onMouseEnter={() => { clearTimeout(hideMenuTimeout.current); }}
+      className={position ? 'show' : ''}
+      style={{ left: position?.x, top: position?.y }}
       ref={contextMenuRef}
     >
       {/* Context Menu Items */}
@@ -114,7 +82,7 @@ function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
 
           {item.children &&
             <ContextMenuWrapper
-              className={shownChildMenu === i ? 'show ms-1' : ''}
+              className={shownChildMenu === i ? 'show' : ''}
               style={{ left: '100%', top: '0' }}
             >
               {item.children?.map((childItem) => (

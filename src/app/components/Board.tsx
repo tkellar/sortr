@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import Draggable from '../wrappers/Draggable';
 import { ViewportProvider } from '../context/ViewportContext';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
-import ContextMenu from './ContextMenu';
 import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './UserItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
 import userItemSubject from '../subjects/UserItemSubject';
+import useContextMenu from '../hooks/useContextMenu';
 
 interface IBoardProps {
   board: BoardViewModel;
@@ -59,7 +59,8 @@ function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
     { displayText: 'Customize...' },
     { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger', onClickAction: deleteThisBoard }
   ];
-  const menu = new ContextMenuViewModel(menuItems);
+
+  useContextMenu(boardRef, new ContextMenuViewModel(menuItems));
 
   return (
     <Draggable allowDrag={selected} initialPosition={{ x, y }}>
@@ -74,7 +75,6 @@ function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
         onClick={() => setSelected(true)}
       >
         <ViewportProvider value={boardRef}>
-          <ContextMenu menu={menu} />
           {childUserItemIds?.map((childId) => (
             <UserItemFactory key={childId} userItemId={childId} parentUserItemId={board.id} />
           ))}

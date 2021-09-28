@@ -28,7 +28,6 @@ class UserItemSubject {
   }
 
   public unsubscribe(userItemId: number, observer: UserItemObserver) {
-    console.log('Unsubscribe from', userItemId);
     this.observers.set(
       userItemId,
       this.observers.get(userItemId).filter((obs) => obs !== observer),
@@ -41,7 +40,16 @@ class UserItemSubject {
   ): Promise<TChild> {
     const parentUserItem = this.userItems.get(parentUserItemId).userItem;
     if (isUserItemParent(parentUserItem)) {
+      // Create the child item
       const createdChildItem = await UserItemsApiClient.createUserItem<TChild>(childItem);
+      const { id: childItemId } = createdChildItem;
+      this.userItems.set(childItemId, {
+        isLoading: false,
+        error: null,
+        userItem: createdChildItem,
+      });
+
+      // Update the parent item
       const updatedParentItem = await UserItemsApiClient.updateUserItem<typeof parentUserItem>(
         parentUserItemId,
         {
@@ -49,13 +57,11 @@ class UserItemSubject {
         },
       );
 
-      this.userItems.set(parentUserItemId, {
+      this.updateAndNotify({
         isLoading: false,
         error: null,
         userItem: updatedParentItem,
       });
-
-      this.notify(parentUserItemId);
 
       return createdChildItem;
     }
@@ -74,22 +80,24 @@ class UserItemSubject {
           ),
         },
       );
-      await UserItemsApiClient.deleteUserItem(childUserItemId);
-
-      this.userItems.set(parentUserItemId, {
+      this.updateAndNotify({
         isLoading: false,
         error: null,
         userItem: updatedParentItem,
       });
 
-      this.notify(parentUserItemId);
+      await UserItemsApiClient.deleteUserItem(childUserItemId);
+      this.observers.delete(childUserItemId);
+      this.userItems.delete(childUserItemId);
     }
   }
 
-  private notify(userItemId: number): void {
-    console.log('Notify subscibers of', userItemId);
+  private updateAndNotify(userItemState: UserItemState) {
+    const { id: userItemId } = userItemState.userItem;
+    this.userItems.set(userItemId, userItemState);
+
     for (const observer of this.observers.get(userItemId)) {
-      observer(this.userItems.get(userItemId));
+      observer(userItemState);
     }
   }
 
@@ -98,13 +106,11 @@ class UserItemSubject {
     this.userItems.set(userItemId, initialState);
 
     UserItemsApiClient.getUserItem(userItemId).then((userItem: IUserItem) => {
-      this.userItems.set(userItemId, {
+      this.updateAndNotify({
         userItem,
         error: null,
         isLoading: false,
       });
-
-      this.notify(userItemId);
     });
 
     return initialState;
