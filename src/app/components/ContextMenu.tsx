@@ -49,28 +49,36 @@ function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
 
   const viewportRef = useViewportContext();
   const hideMenuTimeout = useRef<NodeJS.Timeout>(null);
+  const allowContextMenuRef = useRef(false);
   const contextMenuRef = useClickOutside<HTMLDivElement>(() => {
     setShowing(false);
   });
+
+  useEffect(() => {
+    allowContextMenuRef.current = allowContextMenu;
+  }, [allowContextMenu]);
 
   useEffect(() => {
     function showContextMenu(event: MouseEvent) {
       event.preventDefault();
       event.stopPropagation();
 
-      setShowing(true);
-      setMenuPos({ x: event.offsetX, y: event.offsetY });
-    }
-
-    if (allowContextMenu) {
-      const viewportElement = viewportRef.current;
-      viewportElement.addEventListener('contextmenu', showContextMenu);
-
-      return () => {
-        viewportElement.removeEventListener('contextmenu', showContextMenu);
+      if (allowContextMenuRef.current) {
+        setShowing(true);
+        setMenuPos({ x: event.offsetX, y: event.offsetY });
       }
     }
-  }, [allowContextMenu]);
+
+    const viewportElement = viewportRef.current;
+    viewportElement.addEventListener('contextmenu', showContextMenu);
+
+    return () => {
+      viewportElement.removeEventListener('contextmenu', showContextMenu);
+      if (hideMenuTimeout.current) {
+        clearTimeout(hideMenuTimeout.current);
+      }
+    }
+  }, []);
 
   function onClickWrapper(event: React.MouseEvent<HTMLDivElement, MouseEvent>, onClickAction: (coords: ICoordinates) => void) {
     event.preventDefault();
