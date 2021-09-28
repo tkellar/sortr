@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Draggable from '../mixins/Draggable';
+import Draggable from '../wrappers/Draggable';
 import { FileViewModel } from '../models';
-import useThemeContext from '../context/useThemeContext';
+import useThemeContext from '../context/ThemeContext';
 import useClickOutside from '../hooks/useClickOutside';
 
 const FileWrapper = styled.div`

@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Draggable from '../mixins/Draggable';
-import { ViewportProvider } from '../context/useViewportRef';
+import Draggable from '../wrappers/Draggable';
+import { ViewportProvider } from '../context/ViewportContext';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
-import ContextMenu from '../mixins/ContextMenu';
-import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
+import ContextMenu from './ContextMenu';
+import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './UserItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
+import userItemSubject from '../subjects/UserItemSubject';
+
+interface IBoardProps {
+  board: BoardViewModel;
+  parentUserItemId: number;
+}
 
 const BoardContainer = styled.div<IHeightWidth>`
   position: relative;
@@ -27,23 +33,21 @@ const BoardHeader = styled.div`
   justify-content: space-between;
 `;
 
-function Board({ board }: { board: BoardViewModel }): JSX.Element {
-  const { name, height, width, x, y, childUserItemIds } = board;
+function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
+  const { id, name, height, width, x, y, childUserItemIds } = board;
   const [selected, setSelected] = useState(false);
 
   const boardRef = useClickOutside<HTMLDivElement>(() => {
     setSelected(false);
   });
 
+  async function deleteThisBoard(): Promise<void> {
+    await userItemSubject.deleteChild(parentUserItemId, id);
+  }
+
   const menuItems: ContextMenuItem[] = [
-    {
-      displayText: 'File',
-      iconRight: faAngleRight,
-      children: [
-        { displayText: 'New File', iconLeft: faPlusCircle },
-        { displayText: 'Upload File', iconLeft: faUpload }
-      ]
-    },
+    { displayText: 'New Board', iconLeft: faPlusCircle },
+    { displayText: 'Upload File', iconLeft: faUpload },
     {
       displayText: 'Folder',
       iconRight: faAngleRight,
@@ -52,7 +56,8 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
         { displayText: 'Upload Folder', iconLeft: faUpload }
       ]
     },
-    { displayText: 'Customize...' }
+    { displayText: 'Customize...' },
+    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger', onClickAction: deleteThisBoard }
   ];
   const menu = new ContextMenuViewModel(menuItems);
 
@@ -71,7 +76,7 @@ function Board({ board }: { board: BoardViewModel }): JSX.Element {
         <ViewportProvider value={boardRef}>
           <ContextMenu menu={menu} />
           {childUserItemIds?.map((childId) => (
-            <UserItemFactory key={childId} userItemId={childId} />
+            <UserItemFactory key={childId} userItemId={childId} parentUserItemId={board.id} />
           ))}
         </ViewportProvider>
       </BoardContainer>

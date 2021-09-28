@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, PropsWithChildren, SyntheticEvent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import useViewportContext from '../context/useViewportRef';
+import useViewportContext from '../context/ViewportContext';
 import { ICoordinates } from '../models';
 import { getMouseOffset } from '../helpers/getMouseOffset';
 
