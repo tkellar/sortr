@@ -7,6 +7,10 @@ export class UserItemsApiClient extends BaseApiClient {
     return `${config.API_HOST}/userItems`;
   }
 
+  public static getUserItem(userItemId: number): Promise<IUserItem> {
+    return this.get<IUserItem>(`${this.base}/${userItemId}`);
+  }
+
   public static createUserItem<TUserItem extends IUserItem>(
     userItem: TUserItem,
   ): Promise<TUserItem> {
@@ -18,5 +22,9 @@ export class UserItemsApiClient extends BaseApiClient {
     updates: Partial<TUserItem>,
   ): Promise<TUserItem> {
     return this.patch<TUserItem>(`${this.base}/${userItemId}`, updates);
+  }
+
+  public static deleteUserItem(userItemId: number): Promise<unknown> {
+    return this.delete(`${this.base}/${userItemId}`);
   }
 }

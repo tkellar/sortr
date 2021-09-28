@@ -2,16 +2,17 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../wrappers/Draggable';
-import { ViewportProvider } from '../context/useViewportRef';
-import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth, IUserItem } from '../models';
+import { ViewportProvider } from '../context/ViewportContext';
+import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
 import ContextMenu from './ContextMenu';
 import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './UserItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
+import userItemSubject from '../subjects/UserItemSubject';
 
 interface IBoardProps {
-  board: BoardViewModel,
-  createChild: <TChild extends IUserItem>(childItem: TChild) => Promise<TChild>,
+  board: BoardViewModel;
+  parentUserItemId: number;
 }
 
 const BoardContainer = styled.div<IHeightWidth>`
@@ -32,13 +33,17 @@ const BoardHeader = styled.div`
   justify-content: space-between;
 `;
 
-function Board({ board }: IBoardProps): JSX.Element {
-  const { name, height, width, x, y, childUserItemIds } = board;
+function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
+  const { id, name, height, width, x, y, childUserItemIds } = board;
   const [selected, setSelected] = useState(false);
 
   const boardRef = useClickOutside<HTMLDivElement>(() => {
     setSelected(false);
   });
+
+  async function deleteThisBoard(): Promise<void> {
+    await userItemSubject.deleteChild(parentUserItemId, id);
+  }
 
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle },
@@ -52,7 +57,7 @@ function Board({ board }: IBoardProps): JSX.Element {
       ]
     },
     { displayText: 'Customize...' },
-    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger' }
+    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger', onClickAction: deleteThisBoard }
   ];
   const menu = new ContextMenuViewModel(menuItems);
 
@@ -71,7 +76,7 @@ function Board({ board }: IBoardProps): JSX.Element {
         <ViewportProvider value={boardRef}>
           <ContextMenu menu={menu} />
           {childUserItemIds?.map((childId) => (
-            <UserItemFactory key={childId} userItemId={childId} />
+            <UserItemFactory key={childId} userItemId={childId} parentUserItemId={board.id} />
           ))}
         </ViewportProvider>
       </BoardContainer>

@@ -42,4 +42,16 @@ export abstract class BaseApiClient {
 
     throw new Error();
   }
+
+  protected static async delete(info: RequestInfo): Promise<unknown> {
+    const res = await fetch(info, {
+      method: 'DELETE',
+    });
+
+    if (res.ok) {
+      return res.json();
+    }
+
+    throw new Error();
+  }
 }

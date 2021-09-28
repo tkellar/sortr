@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import useViewportContext from '../context/useViewportRef';
+import useViewportContext from '../context/ViewportContext';
 import useClickOutside from '../hooks/useClickOutside';
 import { ContextMenuViewModel, ICoordinates } from '../models';
 

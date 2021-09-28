@@ -1,14 +1,14 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Header from './components/Header';
-import { ViewportProvider } from './context/useViewportRef';
+import { ViewportProvider } from './context/ViewportContext';
 import DrawerMenu from './components/DrawerMenu';
 import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth, PageViewModel, UserItemType } from './models';
 import ContextMenu from './components/ContextMenu';
 import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
 import UserItemFactory from './components/UserItemFactory';
 import BoardForm from './components/forms/BoardForm';
-import useUserItem from './hooks/useUserItem';
+import userItemSubject, { UserItemState } from './subjects/UserItemSubject';
 
 const initialTheme = {
   colors: {
@@ -74,9 +74,15 @@ const ViewportContentWrapper = styled.div<IHeightWidth>`
 `;
 
 function App(): JSX.Element {
-  const { userItem, createChild } = useUserItem(0);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [newBoardPosition, setNewBoardPosition] = useState<ICoordinates>(null);
+  const [userItemState, setUserItemState] = useState<UserItemState>(null);
+
+  useEffect(() => {
+    userItemSubject.subscribe(0, setUserItemState);
+
+    return () => userItemSubject.unsubscribe(0, setUserItemState);
+  }, []);
 
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle, onClickAction: onNewBoardClick },
@@ -108,12 +114,12 @@ function App(): JSX.Element {
       y,
     };
 
-    await createChild(newBoard);
+    await userItemSubject.createChild(0, newBoard);
     setNewBoardPosition(null);
   }
 
-  const childrenUserItems = (userItem as PageViewModel)?.childUserItemIds?.map((childId) => (
-    <UserItemFactory key={childId} userItemId={childId} />
+  const childrenUserItems = (userItemState?.userItem as PageViewModel)?.childUserItemIds?.map((childId) => (
+    <UserItemFactory key={childId} userItemId={childId} parentUserItemId={0} />
   ));
 
   return (
@@ -123,6 +129,7 @@ function App(): JSX.Element {
         <DrawerMenu />
           <Viewport>
             <ViewportContentWrapper height={4000} width={4000} ref={viewportRef}>
+              {/* TODO: Add UserItemProvider for page object */}
               <ViewportProvider value={viewportRef}>
                 <BoardForm onSubmitCallback={onNewBoardSubmit} showAt={newBoardPosition} />
                 <ContextMenu menu={new ContextMenuViewModel(menuItems)} />

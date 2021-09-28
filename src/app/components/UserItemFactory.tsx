@@ -1,19 +1,22 @@
-import React from 'react';
-import useUserItem from '../hooks/useUserItem';
+import React, { useEffect, useState } from 'react';
 import { BoardViewModel, FileViewModel, UserItemType } from '../models';
+import userItemSubject, { UserItemState } from '../subjects/UserItemSubject';
 import Board from './Board';
 import File from './File';
 
-function UserItemFactory({ userItemId }: { userItemId: number }): JSX.Element {
-  const { userItem, createChild } = useUserItem(userItemId);
+function UserItemFactory({ userItemId, parentUserItemId }: { userItemId: number, parentUserItemId: number }): JSX.Element {
+  const [userItemState, setUserItemState] = useState<UserItemState>(null);
+  useEffect(() => {
+    userItemSubject.subscribe(userItemId, setUserItemState);
 
-  // TODO: Implement removeSelf here??? I need access to the parent for that. Context???
+    return () => userItemSubject.unsubscribe(userItemId, setUserItemState);
+  }, []);
 
-  switch (userItem?.userItemType) {
+  switch (userItemState?.userItem?.userItemType) {
     case UserItemType.Board:
-      return <Board board={userItem as BoardViewModel} createChild={createChild} />;
+      return <Board board={userItemState.userItem as BoardViewModel} parentUserItemId={parentUserItemId} />;
     case UserItemType.File:
-      return <File file={userItem as FileViewModel} />;
+      return <File file={userItemState.userItem as FileViewModel} />;
     default:
       return null;
   }
