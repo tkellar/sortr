@@ -1,10 +1,10 @@
-import { UserItemType } from './UserItemType';
-import { IUserItem } from './IUserItem';
+import { PageItemType } from './PageItemType';
+import { IPageItem } from './IPageItem';
 import { ICoordinates } from './ICoordinates';
 
-export class FileViewModel implements IUserItem, ICoordinates {
+export class FileViewModel implements IPageItem, ICoordinates {
   id?: number;
-  userItemType: UserItemType;
+  pageItemType: PageItemType;
   name: string;
   extension: string;
   x: number;

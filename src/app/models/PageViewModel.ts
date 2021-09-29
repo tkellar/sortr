@@ -1,10 +1,10 @@
-import { IUserItem } from './IUserItem';
-import { IUserItemParent } from './IUserItemParent';
-import { UserItemType } from './UserItemType';
+import { IPageItem } from './IPageItem';
+import { IParentPageItem } from './IParentPageItem';
+import { PageItemType } from './PageItemType';
 
-export class PageViewModel implements IUserItem, IUserItemParent {
+export class PageViewModel implements IPageItem, IParentPageItem {
   id: number;
   name: string;
-  userItemType: UserItemType;
-  childUserItemIds: number[];
+  pageItemType: PageItemType;
+  childPageItemIds: number[];
 }

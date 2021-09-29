@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import useContextMenuContext from '../context/ContextMenuContext';
 import useClickOutside from '../hooks/useClickOutside';
-import { ContextMenuViewModel, ICoordinates } from '../models';
+import { ContextMenuConfig, ICoordinates } from '../models';
 
 const ContextMenuWrapper = styled.div`
   display: none;
@@ -40,7 +40,7 @@ const ContextMenuItemWrapper = styled.div`
   }
 `;
 
-function ContextMenu({ menu }: { menu: ContextMenuViewModel }): JSX.Element {
+function ContextMenu({ menu }: { menu: ContextMenuConfig }): JSX.Element {
   if (!menu) {
     return null;
   }

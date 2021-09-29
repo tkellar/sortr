@@ -3,14 +3,14 @@
     {
       "id": 0,
       "name": "Home Page",
-      "childUserItemIds": [1],
-      "userItemType": 0
+      "childPageItemIds": [1],
+      "pageItemType": 0
     },
     {
       "id": 1,
-      "userItemType": 1,
+      "pageItemType": 1,
       "name": "Board 1",
-      "childUserItemIds": [2, 3],
+      "childPageItemIds": [2, 3],
       "x": 200,
       "y": 200,
       "height": 600,
@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "userItemType": 2,
+      "pageItemType": 2,
       "name": "Word Document",
       "extension": "DOC",
       "x": 100,
@@ -26,7 +26,7 @@
     },
     {
       "id": 3,
-      "userItemType": 2,
+      "pageItemType": 2,
       "name": "Power Point",
       "extension": "PPT",
       "x": 250,

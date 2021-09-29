@@ -2,17 +2,17 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Draggable from '../wrappers/Draggable';
-import { ViewportProvider } from '../context/ViewportContext';
-import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, IHeightWidth } from '../models';
+import { BoundingContainerProvider } from '../context/BoundingContainerContext';
+import { BoardViewModel, ContextMenuItem, ContextMenuConfig, IHeightWidth } from '../models';
 import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
-import UserItemFactory from './UserItemFactory';
+import PageItemFactory from './PageItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
-import userItemSubject from '../subjects/UserItemSubject';
+import pageItemSubject from '../subjects/PageItemSubject';
 import useContextMenu from '../hooks/useContextMenu';
 
 interface IBoardProps {
   board: BoardViewModel;
-  parentUserItemId: number;
+  parentPageItemId: number;
 }
 
 const BoardContainer = styled.div<IHeightWidth>`
@@ -33,8 +33,8 @@ const BoardHeader = styled.div`
   justify-content: space-between;
 `;
 
-function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
-  const { id, name, height, width, x, y, childUserItemIds } = board;
+function Board({ board, parentPageItemId }: IBoardProps): JSX.Element {
+  const { id, name, height, width, x, y, childPageItemIds } = board;
   const [selected, setSelected] = useState(false);
 
   const boardRef = useClickOutside<HTMLDivElement>(() => {
@@ -42,7 +42,7 @@ function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
   });
 
   async function deleteThisBoard(): Promise<void> {
-    await userItemSubject.deleteChild(parentUserItemId, id);
+    await pageItemSubject.deleteChild(parentPageItemId, id);
   }
 
   const menuItems: ContextMenuItem[] = [
@@ -60,7 +60,7 @@ function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
     { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger', onClickAction: deleteThisBoard }
   ];
 
-  useContextMenu(boardRef, new ContextMenuViewModel(menuItems));
+  useContextMenu(boardRef, new ContextMenuConfig(menuItems));
 
   return (
     <Draggable allowDrag={selected} initialPosition={{ x, y }}>
@@ -74,11 +74,11 @@ function Board({ board, parentUserItemId }: IBoardProps): JSX.Element {
         ref={boardRef}
         onClick={() => setSelected(true)}
       >
-        <ViewportProvider value={boardRef}>
-          {childUserItemIds?.map((childId) => (
-            <UserItemFactory key={childId} userItemId={childId} parentUserItemId={board.id} />
+        <BoundingContainerProvider value={boardRef}>
+          {childPageItemIds?.map((childId) => (
+            <PageItemFactory key={childId} pageItemId={childId} parentPageItemId={board.id} />
           ))}
-        </ViewportProvider>
+        </BoundingContainerProvider>
       </BoardContainer>
     </Draggable>
   );

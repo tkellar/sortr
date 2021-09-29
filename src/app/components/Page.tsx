@@ -1,19 +1,19 @@
 import { faPlusCircle, faUpload, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
-import useViewportContext from '../context/ViewportContext';
+import useBoundingContainerContext from '../context/BoundingContainerContext';
 import useContextMenu from '../hooks/useContextMenu';
-import { ContextMenuItem, ContextMenuViewModel, PageViewModel } from '../models';
-import userItemSubject, { UserItemState } from '../subjects/UserItemSubject';
-import UserItemFactory from './UserItemFactory';
+import { ContextMenuItem, ContextMenuConfig, PageViewModel } from '../models';
+import pageItemSubject, { PageItemState } from '../subjects/PageItemSubject';
+import PageItemFactory from './PageItemFactory';
 
-function Page({ pageUserItemId }: { pageUserItemId: number }): JSX.Element {
-  const [userItemState, setUserItemState] = useState<UserItemState>(null);
+function Page({ pageId }: { pageId: number }): JSX.Element {
+  const [pageItemState, setPageItemState] = useState<PageItemState>(null);
 
   useEffect(() => {
-    userItemSubject.subscribe(pageUserItemId, setUserItemState);
+    pageItemSubject.subscribe(pageId, setPageItemState);
 
-    return () => userItemSubject.unsubscribe(pageUserItemId, setUserItemState);
-  }, [pageUserItemId]);
+    return () => pageItemSubject.unsubscribe(pageId, setPageItemState);
+  }, [pageId]);
 
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle },
@@ -29,13 +29,13 @@ function Page({ pageUserItemId }: { pageUserItemId: number }): JSX.Element {
     { displayText: 'Customize...' }
   ];
 
-  const viewportRef = useViewportContext();
-  useContextMenu(viewportRef, new ContextMenuViewModel(menuItems));
+  const viewportRef = useBoundingContainerContext();
+  useContextMenu(viewportRef, new ContextMenuConfig(menuItems));
 
   return (
     <>
-      {(userItemState?.userItem as PageViewModel)?.childUserItemIds?.map((childId) => (
-        <UserItemFactory key={childId} userItemId={childId} parentUserItemId={0} />
+      {(pageItemState?.pageItem as PageViewModel)?.childPageItemIds?.map((childId) => (
+        <PageItemFactory key={childId} pageItemId={childId} parentPageItemId={0} />
       ))}
     </>
   );

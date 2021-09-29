@@ -1,11 +1,11 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
 import useContextMenuContext from '../context/ContextMenuContext';
 import { getMouseOffset } from '../helpers/getMouseOffset';
-import { ContextMenuViewModel } from '../models';
+import { ContextMenuConfig } from '../models';
 
 function useContextMenu(
   viewportRef: MutableRefObject<HTMLElement>,
-  menuConfig: ContextMenuViewModel,
+  menuConfig: ContextMenuConfig,
 ): void {
   const context = useContextMenuContext();
 

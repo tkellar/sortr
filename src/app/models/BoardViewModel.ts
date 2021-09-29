@@ -1,12 +1,12 @@
-import { IHeightWidth, ICoordinates, IUserItem } from '.';
-import { IUserItemParent } from './IUserItemParent';
-import { UserItemType } from './UserItemType';
+import { IHeightWidth, ICoordinates, IPageItem } from '.';
+import { IParentPageItem } from './IParentPageItem';
+import { PageItemType } from './PageItemType';
 
-export class BoardViewModel implements IUserItem, IUserItemParent, IHeightWidth, ICoordinates {
+export class BoardViewModel implements IPageItem, IParentPageItem, IHeightWidth, ICoordinates {
   id?: number;
   name: string;
-  userItemType: UserItemType;
-  childUserItemIds: number[];
+  pageItemType: PageItemType;
+  childPageItemIds: number[];
   height: number;
   width: number;
   x: number;

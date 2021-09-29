@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Header from './components/Header';
-import { ViewportProvider } from './context/ViewportContext';
+import { BoundingContainerProvider } from './context/BoundingContainerContext';
 import DrawerMenu from './components/DrawerMenu';
 import { IHeightWidth } from './models';
 import { ContextMenuProvider } from './context/ContextMenuContext';
@@ -81,9 +81,9 @@ function App(): JSX.Element {
         <Viewport>
           <ViewportContentWrapper height={4000} width={4000} ref={viewportRef}>
             <ContextMenuProvider parentViewport={viewportRef}>
-              <ViewportProvider value={viewportRef}>
-                <Page pageUserItemId={0} />
-              </ViewportProvider>
+              <BoundingContainerProvider value={viewportRef}>
+                <Page pageId={0} />
+              </BoundingContainerProvider>
             </ContextMenuProvider>
           </ViewportContentWrapper>
         </Viewport>

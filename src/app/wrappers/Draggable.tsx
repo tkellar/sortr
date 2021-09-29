@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, PropsWithChildren, SyntheticEvent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import useViewportContext from '../context/ViewportContext';
+import useBoundingContainerContext from '../context/BoundingContainerContext';
 import { ICoordinates } from '../models';
 import { getMouseOffset } from '../helpers/getMouseOffset';
 
@@ -35,7 +35,7 @@ function Draggable({ children, allowDrag, initialPosition }: PropsWithChildren<{
     y: 0,
   });
 
-  const viewportRef = useViewportContext();
+  const viewportRef = useBoundingContainerContext();
   const draggableRef = useRef<HTMLDivElement>(null);
   const allowDragRef = useRef(allowDrag && dragging);
   const mouseGrabPosRef = useRef(mouseGrabPos);

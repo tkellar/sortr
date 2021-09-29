@@ -1,7 +1,7 @@
 import { ContextMenuItem } from "./ContextMenuItem";
 import { ICoordinates } from "./ICoordinates";
 
-export class ContextMenuViewModel {
+export class ContextMenuConfig {
   menuItems: ContextMenuItem[];
   allowContextMenu: boolean;
   position: ICoordinates;
