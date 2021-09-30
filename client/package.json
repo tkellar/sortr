@@ -52,7 +52,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx}": [
+    "src/**/*.{ts,tsx}": [
       "eslint",
       "pretty-quick — staged",
       "git add"

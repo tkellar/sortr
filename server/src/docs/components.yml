@@ -1,0 +1,15 @@
+components:
+  schemas:
+    PageItem:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        pageItemType:
+          type: number
+      example:
+        id: 1
+        name: New Page Item
+        pageItemType: 1
