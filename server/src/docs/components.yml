@@ -1,15 +1,80 @@
 components:
   schemas:
+    Coordinates:
+      type: object
+      properties:
+        x:
+          type: number
+          description: X position relative to parent
+        y:
+          type: number
+          description: Y position relative to parent
+
+    Dimensions:
+      type: object
+      properties:
+        height:
+          type: number
+          description: Height (in px) of this Page Item
+        width:
+          type: number
+          description: Width (in px) of this Page Item
+
     PageItem:
       type: object
+      required:
+        - id
+        - name
+        - pageItemType
       properties:
         id:
           type: number
+          description: The unique identifier for this Page Item
         name:
           type: string
+          description: A friendly name for this Page Item
         pageItemType:
-          type: number
+          type: string
+          enum:
+            - board
+            - file
+            - folder
+          description: The type of this Page Item (ex. 'board', 'file', 'folder', etc.)
       example:
         id: 1
         name: New Page Item
         pageItemType: 1
+
+    ParentPageItem:
+      type: object
+      required:
+      properties:
+        childPageItemIds:
+          type: array
+          items:
+            type: number
+          uniqueItems: true
+          description: The children of this Page Item 
+
+    BoardViewModel:
+      allOf:
+        - $ref: '#/components/schemas/PageItem'
+        - $ref: '#/components/schemas/ParentPageItem'
+        - $ref: '#/components/schemas/Coordinates'
+        - $ref: '#/components/schemas/Dimensions'
+        - type: object
+          required:
+            - id
+            - name
+            - pageItemType
+
+    FileViewModel:
+      allOf:
+        - $ref: '#/components/schemas/PageItem'
+        - $ref: '#/components/schemas/Coordinates'
+        - type: object
+          required:
+            - id
+            - name
+            - pageItemType
+

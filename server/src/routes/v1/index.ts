@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import docsRouter from './docs.route';
+import pageItemsRouter from './pageItems.route';
 
 interface RouteDef {
   path: string;
@@ -8,7 +9,12 @@ interface RouteDef {
 
 const router = express.Router();
 
-const defaultRoutes: RouteDef[] = [];
+const defaultRoutes: RouteDef[] = [
+  {
+    path: '/pageItems',
+    router: pageItemsRouter,
+  },
+];
 
 const devRoutes: RouteDef[] = [
   {
