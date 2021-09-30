@@ -1,14 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import Header from './components/Header';
-import { ViewportProvider } from './context/ViewportContext';
+import { BoundingContainerProvider } from './context/BoundingContainerContext';
 import DrawerMenu from './components/DrawerMenu';
-import { BoardViewModel, ContextMenuItem, ContextMenuViewModel, ICoordinates, IHeightWidth, PageViewModel, UserItemType } from './models';
-import ContextMenu from './components/ContextMenu';
-import { faAngleRight, faPlusCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
-import UserItemFactory from './components/UserItemFactory';
-import BoardForm from './components/forms/BoardForm';
-import userItemSubject, { UserItemState } from './subjects/UserItemSubject';
+import { IHeightWidth } from './models';
+import { ContextMenuProvider } from './context/ContextMenuContext';
+import Page from './components/Page';
 
 const initialTheme = {
   colors: {
@@ -75,68 +72,21 @@ const ViewportContentWrapper = styled.div<IHeightWidth>`
 
 function App(): JSX.Element {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [newBoardPosition, setNewBoardPosition] = useState<ICoordinates>(null);
-  const [userItemState, setUserItemState] = useState<UserItemState>(null);
-
-  useEffect(() => {
-    userItemSubject.subscribe(0, setUserItemState);
-
-    return () => userItemSubject.unsubscribe(0, setUserItemState);
-  }, []);
-
-  const menuItems: ContextMenuItem[] = [
-    { displayText: 'New Board', iconLeft: faPlusCircle, onClickAction: onNewBoardClick },
-    { displayText: 'Upload File', iconLeft: faUpload },
-    {
-      displayText: 'Folder',
-      iconRight: faAngleRight,
-      children: [
-        { displayText: 'New Folder', iconLeft: faPlusCircle },
-        { displayText: 'Upload Folder', iconLeft: faUpload }
-      ]
-    },
-    { displayText: 'Customize...' }
-  ];
-
-  function onNewBoardClick(coords: ICoordinates) {
-    setNewBoardPosition(coords);
-  }
-
-  async function onNewBoardSubmit(formValue: { name: string; width: number; height: number }): Promise<void> {
-    const { x, y } = newBoardPosition;
-    const newBoard: BoardViewModel = {
-      name: formValue.name,
-      height: formValue.height,
-      width: formValue.width,
-      userItemType: UserItemType.Board,
-      childUserItemIds: [],
-      x,
-      y,
-    };
-
-    await userItemSubject.createChild(0, newBoard);
-    setNewBoardPosition(null);
-  }
-
-  const childrenUserItems = (userItemState?.userItem as PageViewModel)?.childUserItemIds?.map((childId) => (
-    <UserItemFactory key={childId} userItemId={childId} parentUserItemId={0} />
-  ));
 
   return (
     <div className="App">
       <ThemeProvider theme={initialTheme}>
         <Header />
         <DrawerMenu />
-          <Viewport>
-            <ViewportContentWrapper height={4000} width={4000} ref={viewportRef}>
-              {/* TODO: Add UserItemProvider for page object */}
-              <ViewportProvider value={viewportRef}>
-                <BoardForm onSubmitCallback={onNewBoardSubmit} showAt={newBoardPosition} />
-                <ContextMenu menu={new ContextMenuViewModel(menuItems)} />
-                {childrenUserItems}
-              </ViewportProvider>
-            </ViewportContentWrapper>
-          </Viewport>
+        <Viewport>
+          <ViewportContentWrapper height={4000} width={4000} ref={viewportRef}>
+            <ContextMenuProvider parentViewport={viewportRef}>
+              <BoundingContainerProvider value={viewportRef}>
+                <Page pageId={0} />
+              </BoundingContainerProvider>
+            </ContextMenuProvider>
+          </ViewportContentWrapper>
+        </Viewport>
       </ThemeProvider>
     </div>
   );
