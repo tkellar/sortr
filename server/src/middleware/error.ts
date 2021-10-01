@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ApiError from '../utils/ApiError';
+import ApiError from '../models/ApiError';
 import httpStatus from 'http-status';
 
 export function errorConverter(
@@ -25,6 +25,7 @@ export function errorHandler(
   _next: NextFunction, // eslint-disable-line @typescript-eslint/no-unused-vars
 ): void {
   const { statusCode, message } = err;
+  res.locals.errorMessage = message;
 
   const response = {
     code: statusCode,

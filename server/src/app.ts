@@ -1,10 +1,14 @@
 import express from 'express';
-import ApiError from './utils/ApiError';
+import ApiError from './models/ApiError';
 import httpStatus from 'http-status';
 import { errorConverter, errorHandler } from './middleware/error';
 import router from './routes/v1';
+import { logSuccessHandler, logErrorHandler } from './middleware/morgan';
 
 const app = express();
+
+app.use(logSuccessHandler);
+app.use(logErrorHandler);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
