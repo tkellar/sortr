@@ -2,7 +2,7 @@ import { Response } from 'express';
 import morgan from 'morgan';
 import chalk from 'chalk';
 
-morgan.token('errorMessage', (_req, res: Response) => res.locals.errorMessage || '');
+morgan.token('errorMessage', (_req, res: Response) => res.locals?.errorMessage || '');
 morgan.token('method', (req) => {
   const { method } = req;
   const c = chalk.bold.underline;

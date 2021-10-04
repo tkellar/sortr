@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
+    "dev": "NODE_ENV=development npm-run-all mongo:start watch",
+    "build": "npm-run-all clean tsc",
     "start": "node -r dotenv/config dist",
+    "dev:start": "npm-run-all build start",
+    "mongo:start": "brew services start mongodb-community@4.4",
+    "mongo:stop": "brew services stop mongodb-community@4.4",
     "clean": "rimraf dist/*",
     "tsc": "tsc",
-    "build": "npm-run-all clean tsc",
-    "dev:start": "npm-run-all build start",
-    "dev": "NODE_ENV=development nodemon --watch src -e ts,yml --exec npm run dev:start",
+    "watch": "nodemon --watch src -e ts,yml --exec npm run dev:start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "tristandkellar@gmail.com",
@@ -47,11 +50,13 @@
   },
   "dependencies": {
     "@types/chalk": "^2.2.0",
+    "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.3",
     "chalk": "^4.1.2",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "http-status": "^1.5.0",
+    "mongoose": "^6.0.8",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"

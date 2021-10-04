@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import ApiError from '../models/ApiError';
+import mongoose from 'mongoose';
+import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
 export function errorConverter(
@@ -10,12 +11,14 @@ export function errorConverter(
 ): void {
   let error = err;
   if (!(error instanceof ApiError)) {
-    const statusCode = error.statusCode || httpStatus.BAD_REQUEST;
+    const statusCode =
+      error.statusCode ||
+      (error instanceof mongoose.Error ? httpStatus.BAD_REQUEST : httpStatus.INTERNAL_SERVER_ERROR);
     const message = error.message || (httpStatus[statusCode] as string);
     error = new ApiError(statusCode, message, false, err.stack);
   }
 
-  next(err);
+  next(error);
 }
 
 export function errorHandler(
@@ -30,7 +33,7 @@ export function errorHandler(
   const response = {
     code: statusCode,
     message,
-    stack: err.stack,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   };
 
   res.status(statusCode).send(response);
