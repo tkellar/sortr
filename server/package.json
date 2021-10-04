@@ -3,15 +3,14 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "dev": "NODE_ENV=development npm-run-all mongo:start watch",
+    "dev": "npm-run-all mongo:start tsnd",
     "build": "npm-run-all clean tsc",
     "start": "node -r dotenv/config dist",
-    "dev:start": "npm-run-all build start",
     "mongo:start": "brew services start mongodb-community@4.4",
     "mongo:stop": "brew services stop mongodb-community@4.4",
     "clean": "rimraf dist/*",
     "tsc": "tsc",
-    "watch": "nodemon --watch src -e ts,yml --exec npm run dev:start",
+    "tsnd": "tsnd --watch src --respawn --transpile-only -r dotenv/config src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "tristandkellar@gmail.com",
@@ -46,6 +45,7 @@
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
     "rimraf": "^3.0.2",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.4.3"
   },
   "dependencies": {
