@@ -79,8 +79,11 @@ workspacesRouter.get('/', WorkspacesController.getWorkspaceByUserId);
  *            type: object
  *            required:
  *              - name
+ *              - userId
  *            properties:
  *              name:
+ *                type: string
+ *              userId:
  *                type: string
  *    responses:
  *      "200":

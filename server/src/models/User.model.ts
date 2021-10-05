@@ -1,17 +1,12 @@
-import mongoose, { Query, Document, Model, Schema } from 'mongoose';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type QueryHelperReturn = Query<any, Document<IUser>> & IUserQueryHelpers;
+import mongoose, { Schema } from 'mongoose';
 
 export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-}
-
-export interface IUserQueryHelpers {
-  byId(id: number): QueryHelperReturn;
+  createdDate: Date;
+  updatedDate?: Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -33,12 +28,13 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
+  createdDate: {
+    type: Date,
+    default: new Date(),
+  },
+  updatedDate: Date,
 });
 
-userSchema.query.byId = function (id: number): QueryHelperReturn {
-  return this.find({ id });
-};
-
-const User = mongoose.model<IUser, Model<IUser, IUserQueryHelpers>>('User', userSchema);
+const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;
