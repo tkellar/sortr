@@ -11,8 +11,7 @@
     "clean": "rimraf dist/*",
     "tsc": "tsc",
     "tsnd": "tsnd --watch src --respawn --transpile-only -r dotenv/config src/index.ts",
-    "test:unit": "jest tests/unit/*",
-    "test:integration": "jest tests/integration/*",
+    "test:routes": "jest tests/routes/*",
     "test:all": "jest"
   },
   "author": "tristandkellar@gmail.com",

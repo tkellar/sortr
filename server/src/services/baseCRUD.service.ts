@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 class BaseCRUDService<T> {
-  private model: mongoose.Model<T>;
+  protected model: mongoose.Model<T>;
 
   constructor(model: mongoose.Model<T>) {
     this.model = model;
