@@ -1,0 +1,155 @@
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - username
+      properties:
+        id:
+          type: number
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+
+    Workspace:
+      type: object
+      required:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Page'
+          description: A list of pages belonging to this workspace
+
+    Page:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+
+    Board:
+      allOf:
+        - $ref: '#/components/partials/PageItem'
+        - $ref: '#/components/partials/Coordinates'
+        - $ref: '#/components/partials/Dimensions'
+        - type: object
+          required:
+            - id
+            - name
+            - pageItemType
+
+    File:
+      allOf:
+        - $ref: '#/components/partials/PageItem'
+        - $ref: '#/components/partials/Coordinates'
+        - type: object
+          required:
+            - id
+            - name
+            - pageItemType
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+  responses:
+    DuplicateEmail:
+      description: Duplicate email
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Duplicate Email
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Please authenticate
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 403
+            message: Forbidden
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 404
+            message: Not found
+  
+  partials:
+    PageItem:
+      type: object
+      properties:
+        id:
+          type: number
+          description: The unique identifier for this Page Item
+        name:
+          type: string
+          description: A friendly name for this Page Item
+        pageItemType:
+          type: string
+          enum:
+            - board
+            - file
+            - folder
+          description: The type of this Page Item (ex. 'board', 'file', 'folder', etc.)
+      example:
+        id: 1
+        name: Picture Board
+        pageItemType: board
+
+    Coordinates:
+      type: object
+      properties:
+        x:
+          type: number
+          description: X position relative to parent
+        y:
+          type: number
+          description: Y position relative to parent
+
+    Dimensions:
+      type: object
+      properties:
+        height:
+          type: number
+          description: Height (in px) of this Page Item
+        width:
+          type: number
+          description: Width (in px) of this Page Item
+
