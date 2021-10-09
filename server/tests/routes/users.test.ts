@@ -1,16 +1,13 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import UserModel, { IUser } from '../../src/models/User.model';
 import request from 'supertest';
 import app from '../../src/app';
-
-dotenv.config();
 
 let johnDeer: mongoose.Document<IUser> & IUser;
 let janeDoe: mongoose.Document<IUser> & IUser;
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.JEST_MONGODB_CONNECTION ?? '');
+  await mongoose.connect(process.env.MONGODB_TEST_CONNECTION ?? '');
 });
 
 beforeEach(async () => {

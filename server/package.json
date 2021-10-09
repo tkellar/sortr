@@ -3,16 +3,13 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "dev": "npm-run-all mongo:start tsnd",
+    "dev": "tsnd --watch src --respawn --transpile-only src/index.ts",
     "build": "npm-run-all clean tsc",
-    "start": "node -r dotenv/config dist",
-    "mongo:start": "brew services start mongodb-community@4.4",
-    "mongo:stop": "brew services stop mongodb-community@4.4",
-    "clean": "rimraf dist/*",
+    "start": "node -r dist",
     "tsc": "tsc",
-    "tsnd": "tsnd --watch src --respawn --transpile-only -r dotenv/config src/index.ts",
     "test:routes": "jest tests/routes/*",
-    "test:all": "jest"
+    "test:all": "jest",
+    "clean": "rimraf dist/*"
   },
   "author": "tristandkellar@gmail.com",
   "license": "ISC",
@@ -59,7 +56,6 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.3",
     "chalk": "^4.1.2",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "http-status": "^1.5.0",
     "mongoose": "^6.0.8",
