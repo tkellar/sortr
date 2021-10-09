@@ -1,14 +1,11 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import request from 'supertest';
 import app from '../../src/app';
-
-dotenv.config();
 
 // Declare 'global' variables
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.JEST_MONGODB_CONNECTION ?? '');
+  await mongoose.connect(process.env.MONGODB_TEST_CONNECTION ?? '');
 });
 
 beforeEach(async () => {

@@ -1,0 +1,20 @@
+{
+  "name": "sortr",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "docker:build": "COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build",
+    "docker:dev": "docker-compose up -d",
+    "docker:stop": "docker-compose down"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkellar/sortr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tkellar/sortr/issues"
+  },
+  "homepage": "https://github.com/tkellar/sortr#readme"
+}
