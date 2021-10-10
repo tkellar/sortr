@@ -1,11 +1,15 @@
-FROM node:14-alpine as base
+FROM node:14-alpine
 
-WORKDIR /server
-COPY package.json yarn.lock /
-EXPOSE 8000
+RUN mkdir -p /usr/src/sortr && chown -R node:node /usr/src/sortr
 
-FROM base as dev
-ENV NODE_ENV=development
-RUN yarn install
-COPY . /
-CMD ["npm run dev"]
+WORKDIR /usr/src/sortr
+
+COPY package.json yarn.lock ./
+
+USER node
+
+RUN yarn install --pure-lockfile
+
+COPY --chown=node:node . .
+
+EXPOSE 3001
