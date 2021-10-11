@@ -3,6 +3,7 @@ import docsRouter from './docs.route';
 import pageItemsRouter from './pageItems.route';
 import usersRouter from './users.route';
 import workspacesRouter from './workspaces.route';
+import authRouter from './auth.route';
 
 export type RouteDef = {
   path: string;
@@ -23,6 +24,10 @@ const defaultRoutes: RouteDef[] = [
   {
     path: '/workspaces',
     router: workspacesRouter,
+  },
+  {
+    path: '/auth',
+    router: authRouter,
   },
 ];
 

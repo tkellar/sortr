@@ -6,6 +6,10 @@ class UserService extends BaseCRUDService<IUser> {
   constructor(model: mongoose.Model<IUser>) {
     super(model);
   }
+
+  async getUserByUsername(username: string) {
+    return this.model.findOne({ username });
+  }
 }
 
 const userService = new UserService(UserModel);

@@ -1,11 +1,7 @@
-import { PageItemType } from './PageItemType';
-import { IPageItem } from './IPageItem';
 import { ICoordinates } from './ICoordinates';
+import { PageItemBase } from './PageItemBase';
 
-export class FileViewModel implements IPageItem, ICoordinates {
-  id?: number;
-  pageItemType: PageItemType;
-  name: string;
+export class FileViewModel extends PageItemBase implements ICoordinates {
   extension: string;
   x: number;
   y: number;

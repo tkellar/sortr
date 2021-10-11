@@ -1,20 +1,9 @@
 import { faPlusCircle, faUpload, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect, useState } from 'react';
 import useBoundingContainerContext from '../context/BoundingContainerContext';
 import useContextMenu from '../hooks/useContextMenu';
-import { ContextMenuItem, ContextMenuConfig, PageViewModel } from '../models';
-import pageItemSubject, { PageItemState } from '../subjects/PageItemSubject';
-import PageItemFactory from './PageItemFactory';
+import { ContextMenuItem, ContextMenuConfig } from '../models';
 
-function Page({ pageId }: { pageId: number }): JSX.Element {
-  const [pageItemState, setPageItemState] = useState<PageItemState>(null);
-
-  useEffect(() => {
-    pageItemSubject.subscribe(pageId, setPageItemState);
-
-    return () => pageItemSubject.unsubscribe(pageId, setPageItemState);
-  }, [pageId]);
-
+function Page({ pageId }: { pageId: string }): JSX.Element {
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle },
     { displayText: 'Upload File', iconLeft: faUpload },
@@ -33,11 +22,7 @@ function Page({ pageId }: { pageId: number }): JSX.Element {
   useContextMenu(viewportRef, new ContextMenuConfig(menuItems));
 
   return (
-    <>
-      {(pageItemState?.pageItem as PageViewModel)?.childPageItemIds?.map((childId) => (
-        <PageItemFactory key={childId} pageItemId={childId} parentPageItemId={0} />
-      ))}
-    </>
+    <div className="Page"></div>
   );
 }
 

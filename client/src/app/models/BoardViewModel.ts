@@ -1,12 +1,11 @@
-import { IHeightWidth, ICoordinates, IPageItem } from '.';
-import { IParentPageItem } from './IParentPageItem';
+import { IHeightWidth, ICoordinates } from '.';
+import { PageItemBase } from './PageItemBase';
 import { PageItemType } from './PageItemType';
 
-export class BoardViewModel implements IPageItem, IParentPageItem, IHeightWidth, ICoordinates {
-  id?: number;
+export class BoardViewModel extends PageItemBase implements IHeightWidth, ICoordinates {
+  _id: string;
   name: string;
   pageItemType: PageItemType;
-  childPageItemIds: number[];
   height: number;
   width: number;
   x: number;

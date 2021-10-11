@@ -1,11 +1,12 @@
 export type { IHeightWidth } from './IHeightWidth';
 export type { ICoordinates } from './ICoordinates';
 export type { IPageItem } from './IPageItem';
-export type { IParentPageItem } from './IParentPageItem';
-export { isParentPageItem } from './IParentPageItem';
+export type { ITokens } from './ITokens';
 export { BoardViewModel } from './BoardViewModel';
 export { FileViewModel } from './FileViewModel';
 export { PageItemType } from './PageItemType';
 export { ContextMenuConfig } from './ContextMenuViewConfig';
 export { ContextMenuItem } from './ContextMenuItem';
 export { PageViewModel } from './PageViewModel';
+export { UserViewModel } from './UserViewModel';
+export { WorkspaceViewModel } from './WorkspaceViewModel';

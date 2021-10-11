@@ -1,10 +1,14 @@
-import { IPageItem } from './IPageItem';
-import { IParentPageItem } from './IParentPageItem';
-import { PageItemType } from './PageItemType';
-
-export class PageViewModel implements IPageItem, IParentPageItem {
-  id: number;
+export class PageViewModel {
+  _id: string;
   name: string;
-  pageItemType: PageItemType;
-  childPageItemIds: number[];
+  createdDate: Date;
+  updatedDate?: Date;
+
+  get id(): string {
+    return this._id;
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
 }

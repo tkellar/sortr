@@ -3,12 +3,16 @@ import { IPageItem } from '../models';
 import { BaseApiClient } from './BaseApiClient';
 
 export class PageItemsApiClient extends BaseApiClient {
-  static get base(): string {
-    return `${config.API_HOST}/userItems`;
+  private static get base(): string {
+    return `${config.API_HOST}/api/v1/pageItems`;
   }
 
-  public static getPageItem(pageItemId: number): Promise<IPageItem> {
+  public static getPageItem(pageItemId: string): Promise<IPageItem> {
     return this.get<IPageItem>(`${this.base}/${pageItemId}`);
+  }
+
+  public static getPageItemsByParentId(parentPageItemId: string): Promise<IPageItem[]> {
+    return this.get<IPageItem[]>(`${this.base}/?parentPageItemId=${parentPageItemId}`);
   }
 
   public static createPageItem<TPageItem extends IPageItem>(
@@ -19,7 +23,7 @@ export class PageItemsApiClient extends BaseApiClient {
 
   public static updatePageItem<TPageItem extends IPageItem>(
     pageItemId: number,
-    updates: Partial<TPageItem>,
+    updates: TPageItem,
   ): Promise<TPageItem> {
     return this.patch<TPageItem>(`${this.base}/${pageItemId}`, updates);
   }

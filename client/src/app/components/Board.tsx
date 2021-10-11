@@ -5,14 +5,14 @@ import Draggable from '../wrappers/Draggable';
 import { BoundingContainerProvider } from '../context/BoundingContainerContext';
 import { BoardViewModel, ContextMenuItem, ContextMenuConfig, IHeightWidth } from '../models';
 import { faAngleRight, faPlusCircle, faTimesCircle, faUpload } from '@fortawesome/free-solid-svg-icons';
-import PageItemFactory from './PageItemFactory';
+// import PageItemFactory from './PageItemFactory';
 import useClickOutside from '../hooks/useClickOutside';
-import pageItemSubject from '../subjects/PageItemSubject';
+// import pageItemSubject from '../subjects/PageItemSubject';
 import useContextMenu from '../hooks/useContextMenu';
 
 interface IBoardProps {
   board: BoardViewModel;
-  parentPageItemId: number;
+  parentPageItemId: string;
 }
 
 const BoardContainer = styled.div<IHeightWidth>`
@@ -33,17 +33,13 @@ const BoardHeader = styled.div`
   justify-content: space-between;
 `;
 
-function Board({ board, parentPageItemId }: IBoardProps): JSX.Element {
-  const { id, name, height, width, x, y, childPageItemIds } = board;
+function Board({ board }: IBoardProps): JSX.Element {
+  const { name, height, width, x, y } = board;
   const [selected, setSelected] = useState(false);
 
   const boardRef = useClickOutside<HTMLDivElement>(() => {
     setSelected(false);
   });
-
-  async function deleteThisBoard(): Promise<void> {
-    await pageItemSubject.deleteChild(parentPageItemId, id);
-  }
 
   const menuItems: ContextMenuItem[] = [
     { displayText: 'New Board', iconLeft: faPlusCircle },
@@ -57,7 +53,7 @@ function Board({ board, parentPageItemId }: IBoardProps): JSX.Element {
       ]
     },
     { displayText: 'Customize...' },
-    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger', onClickAction: deleteThisBoard }
+    { displayText: 'Delete Board', iconLeft: faTimesCircle, additionalClasses: 'text-danger' }
   ];
 
   useContextMenu(boardRef, new ContextMenuConfig(menuItems));
@@ -75,9 +71,6 @@ function Board({ board, parentPageItemId }: IBoardProps): JSX.Element {
         onClick={() => setSelected(true)}
       >
         <BoundingContainerProvider value={boardRef}>
-          {childPageItemIds?.map((childId) => (
-            <PageItemFactory key={childId} pageItemId={childId} parentPageItemId={board.id} />
-          ))}
         </BoundingContainerProvider>
       </BoardContainer>
     </Draggable>

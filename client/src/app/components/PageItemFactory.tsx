@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { BoardViewModel, FileViewModel, PageItemType } from '../models';
-import pageItemSubject, { PageItemState } from '../subjects/PageItemSubject';
+import pageItemSubject, { PageItemState } from '../services/PageItemSubject';
 import Board from './Board';
 import File from './File';
 
-function PageItemFactory({ pageItemId, parentPageItemId }: { pageItemId: number, parentPageItemId: number }): JSX.Element {
+function PageItemFactory({ pageItemId, parentPageItemId }: { pageItemId: string, parentPageItemId: string }): JSX.Element {
   const [pageItemState, setPageItemState] = useState<PageItemState>(null);
   useEffect(() => {
     pageItemSubject.subscribe(pageItemId, setPageItemState);

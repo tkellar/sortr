@@ -1,19 +1,31 @@
-import React from 'react';
-import styled from 'styled-components';
-
-const HeaderContainer = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  height: ${(props) => props.theme.sizing.menuHeight}px;
-  background-color: ${(props) => props.theme.colors.grey100};
-  z-index: ${(props) => props.theme.zIndex.header};
-  box-shadow: ${(props) => props.theme.shadows.createShadow('down')};
-`;
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import authenticationService from '../services/AuthenticationService';
 
 function Header(): JSX.Element {
-  return <HeaderContainer />;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const sub = authenticationService.currentUser.subscribe((user) => {
+      setIsLoggedIn(!!user);
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
+  if (isLoggedIn) {
+    return (
+      <nav className="navbar navbar-expand-lg">
+        <div className="container-fluid">
+          <Link to="/workspaces" className="navbar-brand">
+            SORTr
+          </Link>
+        </div>
+      </nav>
+    );
+  }
+
+  return null;
 }
 
 export default Header;
